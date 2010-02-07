@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="about">À propos</string>
+    <string name="new_remote_game">Nouvelle partie en ligne</string>
+    <string name="new_local_game">Nouvelle partie locale</string>
+    <string name="app_description">Mon premier jeu :)</string>
+    <string name="app_name">Sortie de route !</string>
+    <string name="about_author">À propos de l'auteur</string>
+    <string name="label_author">Auteur : </string>
+    <string name="label_email">E-mail : </string>
+    <string name="label_web_site">Site web : </string>
+    <string name="web_site_url">http://www.google.com</string>
+    <string name="title_changelog">Historique des versions</string>
+    <string name="title_about">À propos</string>
+    <string name="label_1_player">1 (entraînement)</string>
+    <string name="title_nb_players">Nombre de joueurs</string>
+    <string name="error_invalid_nb_players">Erreur : nombre de joueurs invalide !</string>
+    <string name="not_implemented_yet">La fonction demandée n'est pas encore présente dans cette version, merci d'être patient et de vérifier les sorties des mises à jour :)</string>
+</resources>

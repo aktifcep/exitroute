@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:layout_width="wrap_content"
+	android:layout_gravity="top" android:orientation="vertical">
+	<TextView android:text="@string/title_about"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:paddingTop="5px" android:paddingBottom="5px"
+		android:layout_gravity="top" android:gravity="center"
+		android:background="@android:drawable/alert_light_frame"
+		android:textColor="@android:color/black" />
+	<TableLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:stretchColumns="1"
+		android:layout_gravity="top" android:layout_margin="10px">
+		<TableRow android:layout_width="wrap_content"
+			android:layout_height="fill_parent">
+			<TextView android:text="@string/label_author" />
+			<TextView android:text="@string/author_name"
+				android:layout_gravity="right" android:autoLink="none"
+				android:textSize="16px" />
+		</TableRow>
+		<TableRow android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView android:text="@string/label_web_site" />
+			<TextView android:text="@string/web_site_url"
+				android:layout_gravity="right" android:autoLink="web"
+				android:textSize="16px" />
+		</TableRow>
+		<TableRow android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView android:text="@string/label_email" />
+			<TextView android:text="@string/author_email"
+				android:layout_gravity="right" android:autoLink="email"
+				android:textSize="16px" />
+		</TableRow>
+	</TableLayout>
+	<TextView android:layout_height="wrap_content"
+		android:background="@android:drawable/dark_header" android:gravity="center"
+		android:padding="10px" android:clickable="true" android:text="Autres applications"
+		android:layout_gravity="top" android:layout_width="fill_parent" />
+	<TextView android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:paddingTop="5px"
+		android:paddingBottom="5px" android:layout_gravity="top"
+		android:gravity="center" android:background="@android:drawable/alert_light_frame"
+		android:textColor="@android:color/black" android:text="@string/title_changelog" />
+	<ListView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/ChangelogListView"></ListView>
+</LinearLayout>

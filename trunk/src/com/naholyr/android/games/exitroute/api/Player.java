@@ -36,7 +36,7 @@ public class Player {
 	public Speed getNewSpeedForTarget(int x, int y) {
 		return new Speed(x - position.x, y - position.y);
 	}
-	
+
 	public void moveTo(int x, int y, boolean recalculateSpeed) {
 		if (recalculateSpeed) {
 			speed = getNewSpeedForTarget(x, y);

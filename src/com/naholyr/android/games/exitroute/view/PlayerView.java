@@ -1,30 +1,27 @@
 package com.naholyr.android.games.exitroute.view;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.naholyr.android.games.exitroute.api.Player;
 
 public class PlayerView extends TileView {
 
-	public PlayerView(Context context, int resourceId, int x, int y,
-			int cellSize) {
-		super(context, getBitmap(context, resourceId), x, y, cellSize, cellSize);
-
-		setAlpha(255);
-	}
+	private Player _player;
 
 	public PlayerView(Context context, Player player, int cellSize) {
-		super(context, player.iconResourceId, player.position.x * cellSize,
+		super(context, player.icon.getBitmap(), player.position.x * cellSize,
 				player.position.y * cellSize, cellSize, cellSize);
+		_player = player;
+
+		rotate(_player.getOrientationAngle());
 	}
 
-	private static Bitmap getBitmap(Context context, int resourceId) {
-		Resources r = context.getResources();
-
-		return BitmapFactory.decodeResource(r, resourceId);
+	@Override
+	public void moveTo(int x, int y) {
+		super.moveTo(x, y);
+		// Redraw image
+		setImageBitmap(_player.icon.getBitmap());
+		rotate(_player.getOrientationAngle());
 	}
 
 }

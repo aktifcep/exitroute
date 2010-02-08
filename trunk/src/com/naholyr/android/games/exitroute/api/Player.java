@@ -12,6 +12,8 @@ public class Player {
 	public String name;
 
 	public BitmapDrawable icon;
+	
+	public int iconResourceId;
 
 	public Position position;
 
@@ -23,6 +25,7 @@ public class Player {
 	}
 
 	public void setIcon(int resourceId, Resources resources) {
+		iconResourceId = resourceId;
 		icon = (BitmapDrawable) resources.getDrawable(resourceId);
 	}
 

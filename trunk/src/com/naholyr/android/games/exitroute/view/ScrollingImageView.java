@@ -66,7 +66,6 @@ public class ScrollingImageView extends AbsoluteLayout implements
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -119,12 +118,10 @@ public class ScrollingImageView extends AbsoluteLayout implements
 
 	@Override
 	public void onShowPress(MotionEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

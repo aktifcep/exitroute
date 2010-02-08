@@ -12,7 +12,7 @@ public class Player {
 	public String name;
 
 	public BitmapDrawable icon;
-	
+
 	public int iconResourceId;
 
 	public Position position;
@@ -21,7 +21,7 @@ public class Player {
 
 	public Player(String name) {
 		this.name = name;
-		setSpeed(Constants.INITIAL_SPEED_X, Constants.INITIAL_SPEED_Y);
+		speed = new Speed(Constants.INITIAL_SPEED_X, Constants.INITIAL_SPEED_Y);
 	}
 
 	public void setIcon(int resourceId, Resources resources) {
@@ -33,13 +33,13 @@ public class Player {
 		setIcon(resourceId, context.getResources());
 	}
 
-	public void setSpeed(int xOffset, int yOffset) {
-		speed = new Speed(xOffset, yOffset);
+	public Speed getNewSpeedForTarget(int x, int y) {
+		return new Speed(x - position.x, y - position.y);
 	}
-
+	
 	public void moveTo(int x, int y, boolean recalculateSpeed) {
 		if (recalculateSpeed) {
-			setSpeed(x - position.x, y - position.y);
+			speed = getNewSpeedForTarget(x, y);
 		}
 		setPosition(x, y);
 	}
@@ -109,6 +109,28 @@ public class Player {
 
 	public Position[] getTargets() {
 		return getTargets(new Player[] { this });
+	}
+
+	public static float getOrientationAngle(Speed speed) {
+		// P
+		// |\
+		// |a\
+		// | \
+		// | \
+		// Y----X
+		// X² + Y² = H²
+		// sin(a) = X/H
+		// => a = asin(X/sqrt(X²+Y²))
+		double x = speed.x;
+		double y = speed.y;
+		double h = Math.sqrt(x * x + y * y);
+		double a = Math.asin(x / h);
+
+		return (float) ((2 * Math.PI - a) * 180 / Math.PI);
+	}
+
+	public float getOrientationAngle() {
+		return getOrientationAngle(speed);
 	}
 
 }

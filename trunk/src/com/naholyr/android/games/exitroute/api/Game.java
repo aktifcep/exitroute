@@ -77,7 +77,9 @@ public class Game {
 
 			@Override
 			public void onSelect(TargetView view) {
-				// unselect all other targets
+				int x = params.map.getCoordsX(views[i].getLeft());
+				int y = params.map.getCoordsY(views[i].getTop());
+				// Unselect all other targets
 				for (int j = 0; j < views.length; j++) {
 					if (i == j) {
 						continue;
@@ -86,23 +88,28 @@ public class Game {
 						views[j].unSelect();
 					}
 				}
-				// Apply changes to the selected target
+				// Change target view to mark it's selected
 				view.setImageBitmap(player.icon.getBitmap());
 				view.setAlpha(255);
+				Speed speed = player.getNewSpeedForTarget(x, y);
+				float angle = Player.getOrientationAngle(speed);
+				view.rotate(angle);
 				params.map.getView(player).setAlpha(127);
 			}
 
 			@Override
 			public void onConfirm(TargetView view) {
-				int rx = view.getLeft();
-				int ry = view.getTop();
-				int x = params.map.getCoordsX(rx);
-				int y = params.map.getCoordsY(ry);
+				int x = params.map.getCoordsX(views[i].getLeft());
+				int y = params.map.getCoordsY(views[i].getTop());
+				// Move player
 				player.moveTo(x, y);
+				// Redraw
 				params.map.drawPlayer(player);
+				// Remove all targets
 				for (int j = 0; j < views.length; j++) {
 					((ViewGroup) views[j].getParent()).removeView(views[j]);
 				}
+				// Next turn
 				Game.this.nextPlayer();
 				Game.this.run();
 			}

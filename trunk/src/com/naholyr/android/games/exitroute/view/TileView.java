@@ -2,6 +2,8 @@ package com.naholyr.android.games.exitroute.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
@@ -57,4 +59,16 @@ public class TileView extends ImageView {
 		setLayoutParams(params);
 	}
 
+	public void rotate(float angle) {
+		Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+		Matrix matrix = new Matrix();
+		matrix.postRotate(angle);
+		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+				bitmap.getHeight(), matrix, true);
+
+		setImageBitmap(newBitmap);
+		requestLayout();
+	}
+
+	
 }

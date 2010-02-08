@@ -205,7 +205,7 @@ public class Map {
 		int rx = getRealX(player.position.x);
 		int ry = getRealY(player.position.y);
 		if (!_playerViews.containsKey(player)) {
-			PlayerView view = new PlayerView(_context, rx, ry, _cellSize);
+			PlayerView view = new PlayerView(_context, player, _cellSize);
 			_scrollImageView.addView(view);
 			_playerViews.put(player, view);
 		} else {

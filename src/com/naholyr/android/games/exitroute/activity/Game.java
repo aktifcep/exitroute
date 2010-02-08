@@ -78,7 +78,7 @@ public class Game extends Activity {
 		for (int i = 0; i < _nbPlayers; i++) {
 			Player player = new Player("Player " + (i + 1));
 			player.setPosition(25 + 2 * i, 1);
-			player.setIcon(R.drawable.car, this);
+			player.setIcon(Constants.CAR_DRAWABLES[i%Constants.CAR_DRAWABLES.length], this);
 			gameParameters.players[i] = player;
 		}
 	}

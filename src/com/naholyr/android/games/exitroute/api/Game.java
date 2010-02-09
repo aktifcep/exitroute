@@ -14,6 +14,12 @@ public class Game {
 
 	private Player _currentPlayer = null;
 
+	public static interface ErrorListener {
+		public void handle(Throwable e);
+	}
+
+	public ErrorListener errorListener = null;
+
 	public Game(GameParameters gameParameters, int playerIndex) {
 		params = gameParameters;
 		setCurrentPlayer(playerIndex);
@@ -65,7 +71,6 @@ public class Game {
 		for (int i = 0; i < targetViews.length; i++) {
 			setTargetViewBehaviors(targetViews, i);
 		}
-		return;
 	}
 
 	private void setTargetViewBehaviors(final TargetView[] views, final int i) {
@@ -79,71 +84,90 @@ public class Game {
 
 			@Override
 			public void onUnSelect(TargetView view) {
-				view.reset(true);
-				params.map.getView(player).setAlpha(255);
+				try {
+					view.reset(true);
+					params.map.getView(player).setAlpha(255);
+				} catch (Exception e) {
+					Game.this.handleError(e);
+				}
 			}
 
 			@Override
 			public void onSelect(TargetView view) {
-				int x = params.map.getCoordsX(views[i].getLeft());
-				int y = params.map.getCoordsY(views[i].getTop());
-				// Unselect all other targets
-				for (int j = 0; j < views.length; j++) {
-					if (i == j) {
-						continue;
+				try {
+					int x = params.map.getCoordsX(views[i].getLeft());
+					int y = params.map.getCoordsY(views[i].getTop());
+					// Unselect all other targets
+					for (int j = 0; j < views.length; j++) {
+						if (i == j) {
+							continue;
+						}
+						if (views[j].step == TargetView.STEP_CONFIRM) {
+							views[j].unSelect();
+						}
 					}
-					if (views[j].step == TargetView.STEP_CONFIRM) {
-						views[j].unSelect();
-					}
-				}
-				// Change target view to mark it's selected
-				view.setImageBitmap(player.icon.getBitmap());
-				view.setAlpha(255);
-				Speed speed = player.getNewSpeedForTarget(x, y);
-				float angle = Player.getOrientationAngle(speed);
-				view.rotate(angle);
-				params.map.getView(player).setAlpha(127);
+					// Change target view to mark it's selected
+					view.setImageBitmap(player.icon.getBitmap());
+					view.setAlpha(255);
+					Speed speed = player.getNewSpeedForTarget(x, y);
+					float angle = Player.getOrientationAngle(speed);
+					view.rotate(angle);
+					params.map.getView(player).setAlpha(127);
 
-				// Redraw saved original bitmap rect
-				params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
-				// Draw a thick line between position and target
-				Paint paint = new Paint();
-				paint.setStrokeWidth(4.0f);
-				paint.setColor(player.color);
-				params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
-						.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+					// Redraw saved original bitmap rect
+					params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+					// Draw a thick line between position and target
+					Paint paint = new Paint();
+					paint.setStrokeWidth(4.0f);
+					paint.setColor(player.color);
+					params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
+							.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+				} catch (Exception e) {
+					Game.this.handleError(e);
+				}
 			}
 
 			@Override
 			public void onConfirm(TargetView view) {
-				int x = params.map.getCoordsX(views[i].getLeft());
-				int y = params.map.getCoordsY(views[i].getTop());
-				// Redraw saved original bitmap rect
-				params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
-				// Draw a thin line between position and target, and a marker
-				// for original position
-				Paint paint = new Paint();
-				paint.setStrokeWidth(2.0f);
-				paint.setColor(player.color);
-				paint.setStyle(Paint.Style.FILL_AND_STROKE);
-				params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
-						.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
-				params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map
-						.getRealYCenter(player.position.y), 3.0f, paint);
-				// Move player
-				player.moveTo(x, y);
-				// Redraw
-				params.map.drawPlayer(player);
-				// Remove all targets
-				for (int j = 0; j < views.length; j++) {
-					((ViewGroup) views[j].getParent()).removeView(views[j]);
+				try {
+					int x = params.map.getCoordsX(views[i].getLeft());
+					int y = params.map.getCoordsY(views[i].getTop());
+					// Redraw saved original bitmap rect
+					params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+					// Draw a thin line between position and target, and a
+					// marker for original position
+					Paint paint = new Paint();
+					paint.setStrokeWidth(2.0f);
+					paint.setColor(player.color);
+					paint.setStyle(Paint.Style.FILL_AND_STROKE);
+					params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
+							.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+					params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map
+							.getRealYCenter(player.position.y), 3.0f, paint);
+					// Move player
+					player.moveTo(x, y);
+					// Redraw
+					params.map.drawPlayer(player);
+					// Remove all targets
+					for (int j = 0; j < views.length; j++) {
+						((ViewGroup) views[j].getParent()).removeView(views[j]);
+					}
+					// Next turn
+					Game.this.nextPlayer();
+					Game.this.run();
+				} catch (Exception e) {
+					Game.this.handleError(e);
 				}
-				// Next turn
-				Game.this.nextPlayer();
-				Game.this.run();
 			}
 		});
-		return;
+	}
+
+	private void handleError(Throwable e) {
+		if (errorListener != null) {
+			errorListener.handle(e);
+		} else {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

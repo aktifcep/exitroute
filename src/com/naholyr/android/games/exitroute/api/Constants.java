@@ -17,8 +17,8 @@ public class Constants {
 
 	public static final String RESOURCE_PACKAGE = "com.naholyr.android.games.exitroute";
 
-	public static final int INITIAL_SPEED_X = 1;
-	public static final int INITIAL_SPEED_Y = 3;
+	public static final int INITIAL_SPEED_X = 0;
+	public static final int INITIAL_SPEED_Y = 0;
 
 	public static final int DEFAULT_MAP_WIDTH = 240;
 	public static final int DEFAULT_MAP_HEIGHT = 320;

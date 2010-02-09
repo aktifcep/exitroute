@@ -16,4 +16,10 @@
     <string name="title_nb_players">Nombre de joueurs</string>
     <string name="error_invalid_nb_players">Erreur : nombre de joueurs invalide !</string>
     <string name="not_implemented_yet">La fonction demandée n'est pas encore présente dans cette version, merci d'être patient et de vérifier les sorties des mises à jour :)</string>
+    <string name="error">Erreur !</string>
+    <string name="an_error_occurred">Une erreur s'est produite</string>
+    <string name="would_you_send_report">Souhaitez-vous faire un rapport de bug maintenant, afin de rapporter cet incident ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="bug_report_subject">[ExitRoute] Rapport de bug</string>
 </resources>

@@ -2,7 +2,6 @@ package com.naholyr.android.games.exitroute.api;
 
 import android.graphics.Bitmap;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.view.ViewGroup;
 
 import com.naholyr.android.games.exitroute.view.TargetView;
@@ -121,14 +120,16 @@ public class Game {
 				int y = params.map.getCoordsY(views[i].getTop());
 				// Redraw saved original bitmap rect
 				params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
-				// Draw a thin line between position and target, and a marker for original position
+				// Draw a thin line between position and target, and a marker
+				// for original position
 				Paint paint = new Paint();
 				paint.setStrokeWidth(2.0f);
 				paint.setColor(player.color);
 				paint.setStyle(Paint.Style.FILL_AND_STROKE);
 				params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
 						.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
-				params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), 3.0f, paint);
+				params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map
+						.getRealYCenter(player.position.y), 3.0f, paint);
 				// Move player
 				player.moveTo(x, y);
 				// Redraw
@@ -142,7 +143,7 @@ public class Game {
 				Game.this.run();
 			}
 		});
-		return ;
+		return;
 	}
 
 }

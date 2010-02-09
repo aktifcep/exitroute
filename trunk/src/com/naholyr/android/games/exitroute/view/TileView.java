@@ -24,8 +24,7 @@ public class TileView extends ImageView {
 		initialize(x, y, w, h);
 	}
 
-	public TileView(Context context, Drawable drawable, int x, int y, int w,
-			int h) {
+	public TileView(Context context, Drawable drawable, int x, int y, int w, int h) {
 		super(context);
 		setImageDrawable(drawable);
 		initialize(x, y, w, h);
@@ -63,12 +62,10 @@ public class TileView extends ImageView {
 		Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
 		Matrix matrix = new Matrix();
 		matrix.postRotate(angle);
-		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-				bitmap.getHeight(), matrix, true);
+		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
 		setImageBitmap(newBitmap);
 		requestLayout();
 	}
 
-	
 }

@@ -44,8 +44,7 @@ public class Game extends Activity {
 		((ViewGroup) findViewById(R.id.GameFrame)).post(new Runnable() {
 			@Override
 			public void run() {
-				game = new com.naholyr.android.games.exitroute.api.Game(
-						gameParameters);
+				game = new com.naholyr.android.games.exitroute.api.Game(gameParameters);
 				game.draw((ViewGroup) findViewById(R.id.GameFrame));
 				game.run();
 			}
@@ -54,9 +53,7 @@ public class Game extends Activity {
 
 	private void showError(String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message).setTitle(
-				android.R.string.dialog_alert_title).setIcon(
-				android.R.drawable.ic_dialog_alert).setCancelable(true);
+		builder.setMessage(message).setTitle(android.R.string.dialog_alert_title).setIcon(android.R.drawable.ic_dialog_alert).setCancelable(true);
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -65,10 +62,8 @@ public class Game extends Activity {
 		Map.setContext(this);
 
 		// Retrieve nb players
-		Integer nbPlayersNullable = (Integer) getIntent().getExtras().get(
-				Constants.EXTRA_NB_PLAYERS);
-		if (nbPlayersNullable == null || nbPlayersNullable < 1
-				|| nbPlayersNullable > Constants.MAX_PLAYERS) {
+		Integer nbPlayersNullable = (Integer) getIntent().getExtras().get(Constants.EXTRA_NB_PLAYERS);
+		if (nbPlayersNullable == null || nbPlayersNullable < 1 || nbPlayersNullable > Constants.MAX_PLAYERS) {
 			throw new Exception(getString(R.string.error_invalid_nb_players));
 		}
 		_nbPlayers = nbPlayersNullable.intValue();

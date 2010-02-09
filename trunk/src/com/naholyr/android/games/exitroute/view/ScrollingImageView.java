@@ -13,33 +13,27 @@ import android.widget.AbsoluteLayout;
 import android.widget.LinearLayout;
 
 @SuppressWarnings("deprecation")
-public class ScrollingImageView extends AbsoluteLayout implements
-		OnGestureListener {
+public class ScrollingImageView extends AbsoluteLayout implements OnGestureListener {
 
 	public GestureDetector mGestureDetector;
 	public DrawableImageView mImageView;
 
-	public ScrollingImageView(Context context, int imageResId, int imageWidth,
-			int imageHeight) {
+	public ScrollingImageView(Context context, int imageResId, int imageWidth, int imageHeight) {
 		super(context);
 
-		Bitmap img = BitmapFactory.decodeResource(context.getResources(),
-				imageResId);
+		Bitmap img = BitmapFactory.decodeResource(context.getResources(), imageResId);
 		mImageView = new DrawableImageView(context, img);
-		this.addView(mImageView, new LinearLayout.LayoutParams(imageWidth,
-				imageHeight));
+		this.addView(mImageView, new LinearLayout.LayoutParams(imageWidth, imageHeight));
 
 		mGestureDetector = new GestureDetector(this);
 		mGestureDetector.setIsLongpressEnabled(false);
 	}
 
-	public ScrollingImageView(Context context, Bitmap img, int imageWidth,
-			int imageHeight) {
+	public ScrollingImageView(Context context, Bitmap img, int imageWidth, int imageHeight) {
 		super(context);
 
 		mImageView = new DrawableImageView(context, img);
-		this.addView(mImageView, new LinearLayout.LayoutParams(imageWidth,
-				imageHeight));
+		this.addView(mImageView, new LinearLayout.LayoutParams(imageWidth, imageHeight));
 
 		mGestureDetector = new GestureDetector(this);
 		mGestureDetector.setIsLongpressEnabled(false);
@@ -49,8 +43,7 @@ public class ScrollingImageView extends AbsoluteLayout implements
 		this(context, drawable.getBitmap());
 	}
 
-	public ScrollingImageView(Context context, BitmapDrawable drawable,
-			int width, int height) {
+	public ScrollingImageView(Context context, BitmapDrawable drawable, int width, int height) {
 		this(context, drawable.getBitmap(), width, height);
 	}
 
@@ -64,8 +57,7 @@ public class ScrollingImageView extends AbsoluteLayout implements
 	}
 
 	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		return false;
 	}
 
@@ -74,42 +66,31 @@ public class ScrollingImageView extends AbsoluteLayout implements
 	}
 
 	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 		int scrollWidth = mImageView.getWidth() - this.getWidth();
-		if ((this.getScrollX() >= 0) && (this.getScrollX() <= scrollWidth)
-				&& (scrollWidth > 0)) {
+		if ((this.getScrollX() >= 0) && (this.getScrollX() <= scrollWidth) && (scrollWidth > 0)) {
 			int moveX = (int) distanceX;
-			if (((moveX + this.getScrollX()) >= 0)
-					&& ((Math.abs(moveX) + Math.abs(this.getScrollX())) <= scrollWidth)) {
+			if (((moveX + this.getScrollX()) >= 0) && ((Math.abs(moveX) + Math.abs(this.getScrollX())) <= scrollWidth)) {
 				this.scrollBy(moveX, 0);
 			} else {
 				if (distanceX >= 0) {
-					this.scrollBy(scrollWidth
-							- Math.max(Math.abs(moveX), Math.abs(this
-									.getScrollX())), 0);
+					this.scrollBy(scrollWidth - Math.max(Math.abs(moveX), Math.abs(this.getScrollX())), 0);
 				} else {
-					this.scrollBy(-Math.min(Math.abs(moveX), Math.abs(this
-							.getScrollX())), 0);
+					this.scrollBy(-Math.min(Math.abs(moveX), Math.abs(this.getScrollX())), 0);
 				}
 			}
 		}
 
 		int scrollHeight = mImageView.getHeight() - this.getHeight();
-		if ((this.getScrollY() >= 0) && (this.getScrollY() <= scrollHeight)
-				&& (scrollHeight > 0)) {
+		if ((this.getScrollY() >= 0) && (this.getScrollY() <= scrollHeight) && (scrollHeight > 0)) {
 			int moveY = (int) distanceY;
-			if (((moveY + this.getScrollY()) >= 0)
-					&& ((Math.abs(moveY) + Math.abs(this.getScrollY())) <= scrollHeight)) {
+			if (((moveY + this.getScrollY()) >= 0) && ((Math.abs(moveY) + Math.abs(this.getScrollY())) <= scrollHeight)) {
 				this.scrollBy(0, moveY);
 			} else {
 				if (distanceY >= 0) {
-					this.scrollBy(0, scrollHeight
-							- Math.max(Math.abs(moveY), Math.abs(this
-									.getScrollY())));
+					this.scrollBy(0, scrollHeight - Math.max(Math.abs(moveY), Math.abs(this.getScrollY())));
 				} else {
-					this.scrollBy(0, -Math.min(Math.abs(moveY), Math.abs(this
-							.getScrollY())));
+					this.scrollBy(0, -Math.min(Math.abs(moveY), Math.abs(this.getScrollY())));
 				}
 			}
 		}

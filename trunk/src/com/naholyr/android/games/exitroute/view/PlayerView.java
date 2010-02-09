@@ -9,8 +9,7 @@ public class PlayerView extends TileView {
 	private Player _player;
 
 	public PlayerView(Context context, Player player, int cellSize) {
-		super(context, player.icon.getBitmap(), player.position.x * cellSize,
-				player.position.y * cellSize, cellSize, cellSize);
+		super(context, player.icon.getBitmap(), player.position.x * cellSize, player.position.y * cellSize, cellSize, cellSize);
 		_player = player;
 
 		rotate(_player.getOrientationAngle());

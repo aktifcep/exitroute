@@ -11,6 +11,5 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".activity.Game" />
-		<activity android:name=".activity.Example" />
 	</application>
 </manifest>

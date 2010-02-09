@@ -1,7 +1,12 @@
 package com.naholyr.android.games.exitroute.activity;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -34,26 +39,67 @@ public class Game extends Activity {
 
 		try {
 			initializeData();
+
+			setContentView(R.layout.game);
+
+			((ViewGroup) findViewById(R.id.GameFrame)).post(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						game = new com.naholyr.android.games.exitroute.api.Game(gameParameters);
+						game.errorListener = new com.naholyr.android.games.exitroute.api.Game.ErrorListener() {
+							@Override
+							public void handle(Throwable e) {
+								Game.this.handleError(e);
+							}
+						};
+						game.draw((ViewGroup) findViewById(R.id.GameFrame));
+						game.run();
+					} catch (Exception e) {
+						Game.this.handleError(e);
+					}
+				}
+			});
 		} catch (Exception e) {
-			showError(e.getMessage());
-			finish();
+			handleError(e);
 		}
-
-		setContentView(R.layout.game);
-
-		((ViewGroup) findViewById(R.id.GameFrame)).post(new Runnable() {
-			@Override
-			public void run() {
-				game = new com.naholyr.android.games.exitroute.api.Game(gameParameters);
-				game.draw((ViewGroup) findViewById(R.id.GameFrame));
-				game.run();
-			}
-		});
 	}
 
-	private void showError(String message) {
+	private void handleError(final Throwable e) {
+		AlertDialog.OnClickListener onNo = new AlertDialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Game.this.finish();
+			}
+		};
+		AlertDialog.OnClickListener onYes = new AlertDialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String body = "\n\n\n---\n" + e.getMessage() + "\n---\n";
+
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw, true);
+				e.printStackTrace(pw);
+				pw.flush();
+				sw.flush();
+				body += sw.toString();
+
+				final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+				intent.setType("plain/text");
+				intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { getString(R.string.author_email) });
+				intent.putExtra(android.content.Intent.EXTRA_SUBJECT, R.string.bug_report_subject);
+				intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+				Game.this.startActivity(Intent.createChooser(intent, "SendBugReport"));
+				Game.this.finish();
+			}
+		};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message).setTitle(android.R.string.dialog_alert_title).setIcon(android.R.drawable.ic_dialog_alert).setCancelable(true);
+		builder.setMessage(getString(R.string.an_error_occurred) + " : " + e.getLocalizedMessage() + "\n\n"
+				+ getString(R.string.would_you_send_report));
+		builder.setTitle(R.string.error);
+		builder.setIcon(android.R.drawable.ic_dialog_alert);
+		builder.setPositiveButton(R.string.yes, onYes);
+		builder.setNegativeButton(R.string.no, onNo);
 		AlertDialog alert = builder.create();
 		alert.show();
 	}

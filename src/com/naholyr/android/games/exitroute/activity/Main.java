@@ -26,26 +26,23 @@ public class Main extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		((Button) findViewById(R.id.ButtonNewLocalGame))
-				.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						newLocalGame();
-					}
-				});
+		((Button) findViewById(R.id.ButtonNewLocalGame)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				newLocalGame();
+			}
+		});
 
-		((Button) findViewById(R.id.ButtonNewRemoteGame))
-				.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						newRemoteGame();
-					}
-				});
+		((Button) findViewById(R.id.ButtonNewRemoteGame)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				newRemoteGame();
+			}
+		});
 
-		((Button) findViewById(R.id.ButtonAbout))
-				.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						about();
-					}
-				});
+		((Button) findViewById(R.id.ButtonAbout)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				about();
+			}
+		});
 	}
 
 	private void newLocalGame() {
@@ -73,26 +70,20 @@ public class Main extends Activity {
 				dialog = new Dialog(this);
 				dialog.setContentView(R.layout.about);
 				dialog.setTitle(R.string.about);
-				((ListView) dialog.findViewById(R.id.ChangelogListView))
-						.setAdapter(new SimpleAdapter(this, Util
-								.getChangelog(this), R.layout.changelog_entry,
-								new String[] { "Version", "Description" },
-								new int[] { R.id.ChangelogEntryVersion,
-										R.id.ChangelogEntryDescription }));
+				((ListView) dialog.findViewById(R.id.ChangelogListView)).setAdapter(new SimpleAdapter(this, Util.getChangelog(this),
+						R.layout.changelog_entry, new String[] { "Version", "Description" }, new int[] { R.id.ChangelogEntryVersion,
+								R.id.ChangelogEntryDescription }));
 				break;
 			case DIALOG_NOT_IMPLEMENTED_YET:
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getString(R.string.not_implemented_yet))
 				// .setTitle(android.R.string.dialog_alert_title)
 						// .setIcon(android.R.drawable.ic_dialog_alert)
-						.setCancelable(true).setNegativeButton(
-								getString(android.R.string.cancel),
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										dialog.cancel();
-									}
-								});
+						.setCancelable(true).setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
 				dialog = builder.create();
 				break;
 			default:

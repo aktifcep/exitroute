@@ -21,8 +21,7 @@ public class DrawableImageView extends View {
 		mPaint.setARGB(64, 0, 0, 0);
 		mPaint.setStrokeWidth(1);
 
-		Bitmap newBitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(),
-				Bitmap.Config.RGB_565);
+		Bitmap newBitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
 		Canvas newCanvas = new Canvas();
 		newCanvas.setBitmap(newBitmap);
 		if (img != null) {
@@ -42,8 +41,7 @@ public class DrawableImageView extends View {
 		mPaint.setARGB(64, 0, 0, 0);
 		mPaint.setStrokeWidth(1);
 
-		Bitmap newBitmap = Bitmap.createBitmap(width, height,
-				Bitmap.Config.RGB_565);
+		Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		Canvas newCanvas = new Canvas();
 		newCanvas.setBitmap(newBitmap);
 		drawable.draw(newCanvas);
@@ -55,8 +53,7 @@ public class DrawableImageView extends View {
 	}
 
 	public DrawableImageView(Context c, Drawable drawable) {
-		this(c, drawable, drawable.getMinimumWidth(), drawable
-				.getMinimumHeight());
+		this(c, drawable, drawable.getMinimumWidth(), drawable.getMinimumHeight());
 	}
 
 	float scaleX;

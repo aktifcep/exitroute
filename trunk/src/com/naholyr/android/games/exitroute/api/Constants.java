@@ -23,7 +23,7 @@ public class Constants {
 	public static final int DEFAULT_MAP_WIDTH = 240;
 	public static final int DEFAULT_MAP_HEIGHT = 320;
 
-	public static final int[] CAR_DRAWABLES = new int[] { R.drawable.car1,
-			R.drawable.car2 };
+	public static final int[] CAR_DRAWABLES = new int[] { R.drawable.car1, R.drawable.car2 };
+	public static final int[] PLAYER_COLORS = new int[] { 0xAAFF0000, 0xAA0000FF };
 
 }

@@ -34,8 +34,7 @@ public class Map {
 
 	public Map(String name, BitmapDrawable drawable) {
 		if (_context == null) {
-			throw new RuntimeException(
-					"Context undefined. Call Map.setContext(Context) before creating a new map !");
+			throw new RuntimeException("Context undefined. Call Map.setContext(Context) before creating a new map !");
 		}
 
 		_name = name;
@@ -48,10 +47,8 @@ public class Map {
 
 	public static Map get(String mapName) {
 		if (!_maps.containsKey(mapName)) {
-			int resourceId = _context.getResources().getIdentifier(mapName,
-					"drawable", _context.getPackageName());
-			BitmapDrawable drawable = (BitmapDrawable) _context.getResources()
-					.getDrawable(resourceId);
+			int resourceId = _context.getResources().getIdentifier(mapName, "drawable", _context.getPackageName());
+			BitmapDrawable drawable = (BitmapDrawable) _context.getResources().getDrawable(resourceId);
 			Map map = new Map(mapName, drawable);
 			_maps.put(mapName, map);
 		}
@@ -65,8 +62,7 @@ public class Map {
 	}
 
 	public void setDrawable(BitmapDrawable drawable) {
-		setDrawable(drawable, drawable.getMinimumWidth(), drawable
-				.getMinimumHeight());
+		setDrawable(drawable, drawable.getMinimumWidth(), drawable.getMinimumHeight());
 	}
 
 	public void setDrawable(BitmapDrawable drawable, int width, int height) {
@@ -130,8 +126,7 @@ public class Map {
 		// Otherwise, we just take screen size, and remember that we should
 		// later use real layout's dimensions for more precision
 		else {
-			setViewSize(Constants.DEFAULT_MAP_WIDTH,
-					Constants.DEFAULT_MAP_HEIGHT);
+			setViewSize(Constants.DEFAULT_MAP_WIDTH, Constants.DEFAULT_MAP_HEIGHT);
 			_gotViewSizeFromLayout = false;
 		}
 
@@ -252,6 +247,14 @@ public class Map {
 
 	public PlayerView getView(Player player) {
 		return _playerViews.get(player);
+	}
+
+	public float getRealXCenter(int x) {
+		return getRealX(x) + _cellSize / 2;
+	}
+
+	public float getRealYCenter(int y) {
+		return getRealY(y) + _cellSize / 2;
 	}
 
 }

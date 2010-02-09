@@ -113,14 +113,19 @@ public class Player {
 		// P
 		// |\
 		// |a\
-		// | \
-		// | \
+		// |  \
+		// |   \
 		// Y----X
 		// X² + Y² = H²
 		// sin(a) = X/H
 		// => a = asin(X/sqrt(X²+Y²))
 		double x = speed.x;
 		double y = speed.y;
+		
+		if (x == 0) {
+			return 0;
+		}
+		
 		double h = Math.sqrt(x * x + y * y);
 		double a = Math.asin(x / h);
 

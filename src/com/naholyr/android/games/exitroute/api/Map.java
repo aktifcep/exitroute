@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 
-import com.naholyr.android.games.exitroute.view.MapView;
 import com.naholyr.android.games.exitroute.view.PlayerView;
 import com.naholyr.android.games.exitroute.view.ScrollingImageView;
 import com.naholyr.android.games.exitroute.view.TargetView;
@@ -21,7 +20,7 @@ public class Map {
 
 	private static Context _context;
 	private BitmapDrawable _drawable;
-	private MapView _mapView;
+	private ScrollingImageView _scrollImageView;
 
 	private static java.util.Map<String, Map> _maps = new HashMap<String, Map>();
 
@@ -137,14 +136,14 @@ public class Map {
 		}
 
 		// Draw image
-		_mapView = new MapView(_context, _drawable);
+		_scrollImageView = new ScrollingImageView(_context, _drawable);
 
-		layout.addView(_mapView);
+		layout.addView(_scrollImageView);
 
 		// Draw grid
 		if (showGrid) {
-			Canvas canvas = _mapView.mImageView.mCanvas;
-			Paint paint = _mapView.mImageView.mPaint;
+			Canvas canvas = _scrollImageView.mImageView.mCanvas;
+			Paint paint = _scrollImageView.mImageView.mPaint;
 
 			for (int i = 0; i < _size.x; i++) {
 				int x = getRealX(i);
@@ -166,7 +165,7 @@ public class Map {
 	}
 
 	public void scrollToReal(int x, int y) {
-		_mapView.scrollTo(x, y);
+		_scrollImageView.scrollTo(x, y);
 	}
 
 	public void scrollTo(int x, int y) {
@@ -207,7 +206,7 @@ public class Map {
 		int ry = getRealY(player.position.y);
 		if (!_playerViews.containsKey(player)) {
 			PlayerView view = new PlayerView(_context, player, _cellSize);
-			_mapView.addView(view);
+			_scrollImageView.addView(view);
 			_playerViews.put(player, view);
 		} else {
 			PlayerView view = _playerViews.get(player);
@@ -216,7 +215,7 @@ public class Map {
 	}
 
 	public ScrollingImageView getImageView() {
-		return _mapView;
+		return _scrollImageView;
 	}
 
 	public TargetView drawTarget(Position position) {
@@ -227,7 +226,7 @@ public class Map {
 		int rx = getRealX(x);
 		int ry = getRealY(y);
 		TargetView targetView = new TargetView(_context, rx, ry, _cellSize);
-		_mapView.addView(targetView);
+		_scrollImageView.addView(targetView);
 
 		return targetView;
 	}

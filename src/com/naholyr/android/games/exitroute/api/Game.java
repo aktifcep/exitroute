@@ -1,5 +1,8 @@
 package com.naholyr.android.games.exitroute.api;
 
+import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.view.ViewGroup;
 
 import com.naholyr.android.games.exitroute.view.TargetView;
@@ -54,7 +57,7 @@ public class Game {
 		Position[] targets = player.getTargets(params.players);
 
 		// Generate target views
-		final TargetView[] targetViews = new TargetView[targets.length];
+		TargetView[] targetViews = new TargetView[targets.length];
 		for (int i = 0; i < targets.length; i++) {
 			targetViews[i] = params.map.drawTarget(targets[i]);
 		}
@@ -63,10 +66,16 @@ public class Game {
 		for (int i = 0; i < targetViews.length; i++) {
 			setTargetViewBehaviors(targetViews, i);
 		}
+		return;
 	}
 
 	private void setTargetViewBehaviors(final TargetView[] views, final int i) {
 		final Player player = getCurrentPlayer();
+		final int savedX = Math.max(0, params.map.getRealX(player.position.x - Math.abs(player.speed.x)));
+		final int savedY = Math.max(0, params.map.getRealY(player.position.y - Math.abs(player.speed.y)));
+		final int savedW = params.map.getRealX(2 * (Math.abs(player.speed.x) + player.maxAcceleration));
+		final int savedH = params.map.getRealY(2 * (Math.abs(player.speed.y) + player.maxAcceleration));
+		final Bitmap savedBitmap = Bitmap.createBitmap(params.map.getImageView().mImageView.mBitmap, savedX, savedY, savedW, savedH);
 		views[i].setListener(new TargetView.Listener() {
 
 			@Override
@@ -95,12 +104,31 @@ public class Game {
 				float angle = Player.getOrientationAngle(speed);
 				view.rotate(angle);
 				params.map.getView(player).setAlpha(127);
+
+				// Redraw saved original bitmap rect
+				params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+				// Draw a thick line between position and target
+				Paint paint = new Paint();
+				paint.setStrokeWidth(4.0f);
+				paint.setColor(player.color);
+				params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
+						.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
 			}
 
 			@Override
 			public void onConfirm(TargetView view) {
 				int x = params.map.getCoordsX(views[i].getLeft());
 				int y = params.map.getCoordsY(views[i].getTop());
+				// Redraw saved original bitmap rect
+				params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+				// Draw a thin line between position and target, and a marker for original position
+				Paint paint = new Paint();
+				paint.setStrokeWidth(2.0f);
+				paint.setColor(player.color);
+				paint.setStyle(Paint.Style.FILL_AND_STROKE);
+				params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
+						.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+				params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), 3.0f, paint);
 				// Move player
 				player.moveTo(x, y);
 				// Redraw
@@ -114,6 +142,7 @@ public class Game {
 				Game.this.run();
 			}
 		});
+		return ;
 	}
 
 }

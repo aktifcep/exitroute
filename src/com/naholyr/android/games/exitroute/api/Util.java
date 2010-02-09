@@ -21,18 +21,15 @@ public class Util {
 	public static List<Map<String, String>> getChangelog(Context context) {
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
-		String[] allVersions = context.getResources().getStringArray(
-				R.array.all_versions);
+		String[] allVersions = context.getResources().getStringArray(R.array.all_versions);
 		for (int i = 0; i < allVersions.length; i++) {
 			Map<String, String> changelogEntry = new HashMap<String, String>();
 			try {
 				String version = allVersions[i];
-				int descriptionStringId = context.getResources().getIdentifier(
-						"version_" + version.replace(".", "_"), "string",
+				int descriptionStringId = context.getResources().getIdentifier("version_" + version.replace(".", "_"), "string",
 						context.getPackageName());
 				changelogEntry.put("Version", version);
-				changelogEntry.put("Description", context
-						.getString(descriptionStringId));
+				changelogEntry.put("Description", context.getString(descriptionStringId));
 				result.add(0, changelogEntry);
 			} catch (Exception e) {
 				// Causes : out of bounds, resource not found, see changelog.xml

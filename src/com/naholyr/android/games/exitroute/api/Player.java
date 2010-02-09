@@ -19,6 +19,11 @@ public class Player {
 
 	public Speed speed;
 
+	public int maxAcceleration = 1;
+	public int maxDeceleration = 1;
+
+	public int color = 0xAA000000;
+
 	public Player(String name) {
 		this.name = name;
 		speed = new Speed(Constants.INITIAL_SPEED_X, Constants.INITIAL_SPEED_Y);
@@ -68,34 +73,27 @@ public class Player {
 	}
 
 	public Position[] getTargets(Player[] players) {
+		// FIXME Calculate depending on maxAcceleration & maxDeceleration
 		List<Position> positions = new ArrayList<Position>();
 
 		// X
 		positions.add(new Position(position.x + speed.x, position.y + speed.y));
 		// NW
-		positions.add(new Position(position.x + speed.x - 1, position.y
-				+ speed.y - 1));
+		positions.add(new Position(position.x + speed.x - 1, position.y + speed.y - 1));
 		// N
-		positions.add(new Position(position.x + speed.x, position.y + speed.y
-				- 1));
+		positions.add(new Position(position.x + speed.x, position.y + speed.y - 1));
 		// NE
-		positions.add(new Position(position.x + speed.x + 1, position.y
-				+ speed.y - 1));
+		positions.add(new Position(position.x + speed.x + 1, position.y + speed.y - 1));
 		// E
-		positions.add(new Position(position.x + speed.x + 1, position.y
-				+ speed.y));
+		positions.add(new Position(position.x + speed.x + 1, position.y + speed.y));
 		// SE
-		positions.add(new Position(position.x + speed.x + 1, position.y
-				+ speed.y + 1));
+		positions.add(new Position(position.x + speed.x + 1, position.y + speed.y + 1));
 		// S
-		positions.add(new Position(position.x + speed.x, position.y + speed.y
-				+ 1));
+		positions.add(new Position(position.x + speed.x, position.y + speed.y + 1));
 		// SW
-		positions.add(new Position(position.x + speed.x - 1, position.y
-				+ speed.y + 1));
+		positions.add(new Position(position.x + speed.x - 1, position.y + speed.y + 1));
 		// W
-		positions.add(new Position(position.x + speed.x - 1, position.y
-				+ speed.y));
+		positions.add(new Position(position.x + speed.x - 1, position.y + speed.y));
 
 		// All players position, we will exclude all positions from this array
 		List<Position> playerPositions = new ArrayList<Position>();

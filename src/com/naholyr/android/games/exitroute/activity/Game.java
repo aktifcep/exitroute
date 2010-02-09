@@ -77,9 +77,9 @@ public class Game extends Activity {
 		gameParameters = new GameParameters("map1", _nbPlayers);
 		for (int i = 0; i < _nbPlayers; i++) {
 			Player player = new Player("Player " + (i + 1));
+			player.color = Constants.PLAYER_COLORS[i % Constants.CAR_DRAWABLES.length];
 			player.setPosition(25 + 2 * i, 1);
-			player.setIcon(Constants.CAR_DRAWABLES[i
-					% Constants.CAR_DRAWABLES.length], this);
+			player.setIcon(Constants.CAR_DRAWABLES[i % Constants.CAR_DRAWABLES.length], this);
 			gameParameters.players[i] = player;
 		}
 	}

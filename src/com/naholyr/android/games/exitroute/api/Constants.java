@@ -26,4 +26,9 @@ public class Constants {
 	public static final int[] CAR_DRAWABLES = new int[] { R.drawable.car1, R.drawable.car2 };
 	public static final int[] PLAYER_COLORS = new int[] { 0xAAFF0000, 0xAA0000FF };
 
+	public static final char MAP_SYMBOL_WALL = '#';
+	public static final char MAP_SYMBOL_ROAD = ' ';
+	public static final char MAP_SYMBOL_START = '~';
+	public static final char MAP_SYMBOL_END = '*';
+
 }

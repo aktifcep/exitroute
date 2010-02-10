@@ -53,8 +53,12 @@ public class Player {
 		moveTo(x, y, true);
 	}
 
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+
 	public void setPosition(int x, int y) {
-		position = new Position(x, y);
+		setPosition(new Position(x, y));
 	}
 
 	public void moveTo(int x, int y, boolean recalculateSpeed, Map map) {

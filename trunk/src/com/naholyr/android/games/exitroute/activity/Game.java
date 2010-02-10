@@ -2,6 +2,8 @@ package com.naholyr.android.games.exitroute.activity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
+import java.util.Vector;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,6 +18,7 @@ import com.naholyr.android.games.exitroute.api.Constants;
 import com.naholyr.android.games.exitroute.api.GameParameters;
 import com.naholyr.android.games.exitroute.api.Map;
 import com.naholyr.android.games.exitroute.api.Player;
+import com.naholyr.android.games.exitroute.api.Position;
 import com.naholyr.android.games.exitroute.view.ScrollingImageView;
 
 public class Game extends Activity {
@@ -75,7 +78,8 @@ public class Game extends Activity {
 		AlertDialog.OnClickListener onYes = new AlertDialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				String body = "\n\n\n---\n" + e.getMessage() + "\n---\n";
+				String errorMessage = e.getMessage() == null ? e.getClass().getName() : e.getMessage();
+				String body = "\n\n\n---\n" + errorMessage + "\n---\n";
 
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw, true);
@@ -93,9 +97,9 @@ public class Game extends Activity {
 				Game.this.finish();
 			}
 		};
+		String errorMessage = e.getLocalizedMessage() == null ? e.getClass().getName() : e.getLocalizedMessage();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getString(R.string.an_error_occurred) + " : " + e.getLocalizedMessage() + "\n\n"
-				+ getString(R.string.would_you_send_report));
+		builder.setMessage(getString(R.string.an_error_occurred) + " : " + errorMessage + "\n\n" + getString(R.string.would_you_send_report));
 		builder.setTitle(R.string.error);
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
 		builder.setPositiveButton(R.string.yes, onYes);
@@ -116,10 +120,27 @@ public class Game extends Activity {
 
 		// Generate game parameters
 		gameParameters = new GameParameters("map1", _nbPlayers);
+		Position[] starts = gameParameters.map.getStartCells();
+		if (starts.length < _nbPlayers) {
+			// TODO localize
+			throw new RuntimeException("Not enough start positions for the expected number of players !");
+		}
+		// Generate random start positions
+		List<Position> startsList = new Vector<Position>();
+		for (int i = 0; i < starts.length; i++) {
+			startsList.add(starts[i]);
+		}
+		Position[] randomStarts = new Position[_nbPlayers];
+		for (int i = 0; i < randomStarts.length; i++) {
+			int k = (int) Math.floor(Math.random() * startsList.size());
+			randomStarts[i] = startsList.get(k);
+			startsList.remove(k);
+		}
+		// Generate players
 		for (int i = 0; i < _nbPlayers; i++) {
 			Player player = new Player("Player " + (i + 1));
 			player.color = Constants.PLAYER_COLORS[i % Constants.CAR_DRAWABLES.length];
-			player.setPosition(25 + 2 * i, 1);
+			player.setPosition(randomStarts[i]);
 			player.setIcon(Constants.CAR_DRAWABLES[i % Constants.CAR_DRAWABLES.length], this);
 			gameParameters.players[i] = player;
 		}

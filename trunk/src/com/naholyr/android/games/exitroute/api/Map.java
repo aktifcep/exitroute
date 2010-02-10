@@ -1,6 +1,10 @@
 package com.naholyr.android.games.exitroute.api;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import android.content.Context;
@@ -30,15 +34,20 @@ public class Map {
 	private boolean _gotViewSizeFromLayout = false;
 	private int _cellSize = Constants.CELL_SIZE;
 
+	private char[][] _cells;
+	private Position[] _starts;
+	private Position[] _ends;
+
 	private java.util.Map<Player, PlayerView> _playerViews = new HashMap<Player, PlayerView>();
 
-	public Map(String name, BitmapDrawable drawable) {
+	public Map(String name, InputStream mapInfo, BitmapDrawable drawable) {
 		if (_context == null) {
 			throw new RuntimeException("Context undefined. Call Map.setContext(Context) before creating a new map !");
 		}
 
 		_name = name;
 		setDrawable(drawable);
+		setMapInfo(mapInfo);
 	}
 
 	public static void setContext(Context context) {
@@ -47,25 +56,110 @@ public class Map {
 
 	public static Map get(String mapName) {
 		if (!_maps.containsKey(mapName)) {
-			int resourceId = _context.getResources().getIdentifier(mapName, "drawable", _context.getPackageName());
-			BitmapDrawable drawable = (BitmapDrawable) _context.getResources().getDrawable(resourceId);
-			Map map = new Map(mapName, drawable);
+			int drawableResId = _context.getResources().getIdentifier(mapName, "drawable", _context.getPackageName());
+			int rawResId = _context.getResources().getIdentifier(mapName, "raw", _context.getPackageName());
+			BitmapDrawable drawable = (BitmapDrawable) _context.getResources().getDrawable(drawableResId);
+			InputStream mapInfo = _context.getResources().openRawResource(rawResId);
+			Map map = new Map(mapName, mapInfo, drawable);
 			_maps.put(mapName, map);
 		}
 
 		return _maps.get(mapName);
 	}
 
-	public void setViewSize(int w, int h) {
+	private void setViewSize(int w, int h) {
 		_viewWidth = w;
 		_viewHeight = h;
 	}
 
-	public void setDrawable(BitmapDrawable drawable) {
+	private void setDrawable(BitmapDrawable drawable) {
 		setDrawable(drawable, drawable.getMinimumWidth(), drawable.getMinimumHeight());
 	}
 
-	public void setDrawable(BitmapDrawable drawable, int width, int height) {
+	private void setMapInfo(InputStream description) {
+		_cells = new char[_size.x][_size.y];
+		try {
+			description.reset();
+			char symbol;
+			int x = 0;
+			int y = 0;
+			List<Position> starts = new ArrayList<Position>();
+			List<Position> ends = new ArrayList<Position>();
+			while (true) {
+				int c = description.read();
+				// End of file
+				if (c == -1) {
+					break;
+				}
+				symbol = (char) c;
+				if (c == 10) { // \r : skip
+					continue;
+				}
+				if (c == 13) { // \n : end of line
+					// Fill missing characters on the line
+					for (int i = x + 1; i < _size.x; i++) {
+						_cells[i][y] = Constants.MAP_SYMBOL_WALL;
+					}
+					// New line
+					y += 1;
+					x = 0;
+					// Additional lines in the file
+					if (y >= _size.y) {
+						break;
+					} else {
+						continue;
+					}
+				} else if (x >= _size.x) {
+					// Additional characters on the line : read until next line
+					continue;
+				} else {
+					// Unknown symbol
+					if (symbol != Constants.MAP_SYMBOL_WALL && symbol != Constants.MAP_SYMBOL_START && symbol != Constants.MAP_SYMBOL_END
+							&& symbol != Constants.MAP_SYMBOL_ROAD) {
+						symbol = Constants.MAP_SYMBOL_WALL;
+					}
+					// Special symbol
+					if (symbol == Constants.MAP_SYMBOL_START) {
+						starts.add(new Position(x, y));
+					}
+					if (symbol == Constants.MAP_SYMBOL_END) {
+						ends.add(new Position(x, y));
+					}
+					// store the cell information, and go to next character
+					_cells[x][y] = symbol;
+					x += 1;
+				}
+			}
+			// Fill missing characters of last line
+			if (y < _size.y) {
+				for (int i = x + 1; i < _size.x; i++) {
+					_cells[i][y] = Constants.MAP_SYMBOL_WALL;
+				}
+			}
+			// Fill missing lines
+			for (int j = y + 1; j < _size.y; j++) {
+				for (int i = 0; i < _size.x; i++) {
+					_cells[i][j] = Constants.MAP_SYMBOL_WALL;
+				}
+			}
+			// Check and store start/end information
+			if (starts.size() == 0) {
+				// TODO localize
+				throw new RuntimeException("Map has no start position !");
+			}
+			if (ends.size() == 0) {
+				// TODO localize
+				throw new RuntimeException("Map has no end position !");
+			}
+			_starts = starts.toArray(new Position[] {});
+			_ends = ends.toArray(new Position[] {});
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return;
+	}
+
+	private void setDrawable(BitmapDrawable drawable, int width, int height) {
 		_drawable = drawable;
 
 		int w = (width - (width % _cellSize)) / _cellSize;
@@ -257,4 +351,32 @@ public class Map {
 		return getRealY(y) + _cellSize / 2;
 	}
 
+	public char getCell(int x, int y) {
+		return _cells[x][y];
+	}
+	
+	public boolean isCellAccessible(int x, int y) {
+		return getCell(x, y) != Constants.MAP_SYMBOL_WALL;
+	}
+
+	public boolean isCellStart(int x, int y) {
+		return getCell(x, y) != Constants.MAP_SYMBOL_START;
+	}
+
+	public boolean isCellEnd(int x, int y) {
+		return getCell(x, y) != Constants.MAP_SYMBOL_END;
+	}
+
+	public boolean isCellRoad(int x, int y) {
+		return getCell(x, y) != Constants.MAP_SYMBOL_ROAD;
+	}
+
+	public Position[] getStartCells() {
+		return _starts;
+	}
+
+	public Position[] getEndCells() {
+		return _ends;
+	}
+	
 }

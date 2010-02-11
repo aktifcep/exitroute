@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 
@@ -232,15 +233,14 @@ public class Map {
 		// Draw grid
 		if (showGrid) {
 			Canvas canvas = _scrollImageView.mImageView.mCanvas;
-			Paint paint = _scrollImageView.mImageView.mPaint;
 
 			for (int i = 0; i < _size.x; i++) {
-				int x = getRealX(i);
-				canvas.drawLine(x, 0, x, getRealHeight(), paint);
-			}
-			for (int j = 0; j < _size.y; j++) {
-				int y = getRealY(j);
-				canvas.drawLine(0, y, getRealWidth(), y, paint);
+				for (int j = 0; j < _size.y; j++) {
+					int x = getRealX(i);
+					int y = getRealY(j);
+					char cell = getCell(i, j);
+					canvas.drawRect(x, y, x + _cellSize, y + _cellSize, Map.getCellPaint(cell));
+				}
 			}
 		}
 	}
@@ -354,7 +354,7 @@ public class Map {
 	public char getCell(int x, int y) {
 		return _cells[x][y];
 	}
-	
+
 	public boolean isCellAccessible(int x, int y) {
 		return getCell(x, y) != Constants.MAP_SYMBOL_WALL;
 	}
@@ -378,5 +378,38 @@ public class Map {
 	public Position[] getEndCells() {
 		return _ends;
 	}
-	
+
+	private static java.util.Map<Character, Paint> _cellPaints = new HashMap<Character, Paint>();
+
+	private static Paint getCellPaint(char cell) {
+		if (!_cellPaints.containsKey(cell)) {
+			Paint paint = new Paint();
+			switch (cell) {
+				case Constants.MAP_SYMBOL_WALL:
+					paint.setColor(0x00ffffff);
+					paint.setStrokeWidth(0.0f);
+					break;
+				case Constants.MAP_SYMBOL_END:
+					paint.setStyle(Style.FILL_AND_STROKE);
+					paint.setColor(0x66FF6666);
+					paint.setStrokeWidth(1.0f);
+					break;
+				case Constants.MAP_SYMBOL_START:
+					paint.setStyle(Style.FILL_AND_STROKE);
+					paint.setColor(0x6666FF66);
+					paint.setStrokeWidth(1.0f);
+					break;
+				case Constants.MAP_SYMBOL_ROAD:
+				default:
+					paint.setStyle(Style.STROKE);
+					paint.setColor(0x33999999);
+					paint.setStrokeWidth(1.0f);
+					break;
+			}
+			_cellPaints.put(cell, paint);
+		}
+
+		return _cellPaints.get(cell);
+	}
+
 }

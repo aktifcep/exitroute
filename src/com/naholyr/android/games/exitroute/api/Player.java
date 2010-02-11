@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 
 public class Player {
 
@@ -124,16 +125,24 @@ public class Player {
 		// sin(a) = X/H
 		// => a = asin(X/sqrt(X²+Y²))
 		double x = speed.x;
-		double y = speed.y;
+		double y = Math.abs(speed.y);
 		
 		if (x == 0) {
-			return 0;
+			return speed.y >= 0 ? 0 : 180;
 		}
 		
 		double h = Math.sqrt(x * x + y * y);
 		double a = Math.asin(x / h);
 
-		return (float) ((2 * Math.PI - a) * 180 / Math.PI);
+		float angle = (float) ((2 * Math.PI - a) * 180 / Math.PI);
+		
+		if (speed.y < 0) {
+			angle = 180 - angle;
+		}
+		
+		Log.d("Player.angle", String.valueOf(angle));
+		
+		return angle;
 	}
 
 	public float getOrientationAngle() {

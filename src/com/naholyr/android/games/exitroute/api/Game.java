@@ -1,9 +1,14 @@
 package com.naholyr.android.games.exitroute.api;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.ViewGroup;
 
+import com.naholyr.android.games.exitroute.R;
 import com.naholyr.android.games.exitroute.view.TargetView;
 
 public class Game {
@@ -75,10 +80,11 @@ public class Game {
 
 	private void setTargetViewBehaviors(final TargetView[] views, final int i) {
 		final Player player = getCurrentPlayer();
-		final int savedX = Math.max(0, params.map.getRealX(player.position.x - Math.abs(player.speed.x)));
-		final int savedY = Math.max(0, params.map.getRealY(player.position.y - Math.abs(player.speed.y)));
-		final int savedW = params.map.getRealX(2 * (Math.abs(player.speed.x) + player.maxAcceleration));
-		final int savedH = params.map.getRealY(2 * (Math.abs(player.speed.y) + player.maxAcceleration));
+		final int savedX = params.map.getRealX(Math.max(0, player.position.x - Math.abs(player.speed.x) - player.maxAcceleration));
+		final int savedY = params.map.getRealY(Math.max(0, player.position.y - Math.abs(player.speed.y) - player.maxAcceleration));
+		final int savedW = params.map.getRealX(2 * (Math.abs(player.speed.x) + player.maxAcceleration) + 1);
+		final int savedH = params.map.getRealY(2 * (Math.abs(player.speed.y) + player.maxAcceleration) + 1);
+		final Canvas canvas = params.map.getImageView().mImageView.mCanvas;
 		final Bitmap savedBitmap = Bitmap.createBitmap(params.map.getImageView().mImageView.mBitmap, savedX, savedY, savedW, savedH);
 		views[i].setListener(new TargetView.Listener() {
 
@@ -95,8 +101,8 @@ public class Game {
 			@Override
 			public void onSelect(TargetView view) {
 				try {
-					int x = params.map.getCoordsX(views[i].getLeft());
-					int y = params.map.getCoordsY(views[i].getTop());
+					int x = params.map.getCoordsX(view.getLeft());
+					int y = params.map.getCoordsY(view.getTop());
 					// Unselect all other targets
 					for (int j = 0; j < views.length; j++) {
 						if (i == j) {
@@ -115,13 +121,20 @@ public class Game {
 					params.map.getView(player).setAlpha(127);
 
 					// Redraw saved original bitmap rect
-					params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+					canvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
 					// Draw a thick line between position and target
 					Paint paint = new Paint();
 					paint.setStrokeWidth(4.0f);
 					paint.setColor(player.color);
-					params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
-							.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+					float x1 = params.map.getRealXCenter(x);
+					float y1 = params.map.getRealYCenter(y);
+					float x2 = params.map.getRealXCenter(player.position.x);
+					float y2 = params.map.getRealYCenter(player.position.y);
+					canvas.drawLine(x1, y1, x2, y2, paint);
+					if (!params.map.isCellAccessible(x, y)) {
+						Bitmap warningImg = BitmapFactory.decodeResource(view.getContext().getResources(), R.drawable.warning);
+						canvas.drawBitmap(warningImg, view.getLeft(), view.getTop(), new Paint());
+					}
 				} catch (Exception e) {
 					Game.this.handleError(e);
 				}
@@ -146,6 +159,22 @@ public class Game {
 							.getRealYCenter(player.position.y), 3.0f, paint);
 					// Move player
 					player.moveTo(x, y);
+					if (!params.map.isCellAccessible(x, y)) {
+						// Exit route ! => Speed = 0 + alert
+						player.speed = new Speed(0, 0);
+						AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+						builder.setMessage("Sortie de route ! Vitesse = 0");
+						builder.setTitle(R.string.error);
+						builder.setCancelable(true);
+						builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						});
+						builder.setIcon(android.R.drawable.ic_dialog_alert);
+						AlertDialog alert = builder.create();
+						alert.show();
+					}
 					// Redraw
 					params.map.drawPlayer(player);
 					// Remove all targets

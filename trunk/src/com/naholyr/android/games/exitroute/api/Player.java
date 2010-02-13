@@ -146,4 +146,8 @@ public class Player {
 		return getOrientationAngle(speed);
 	}
 
+	public int getCurrentSpeed() {
+		return Math.max(Math.abs(speed.x), Math.abs(speed.y));
+	}
+	
 }

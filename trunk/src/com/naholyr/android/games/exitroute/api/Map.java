@@ -320,12 +320,16 @@ public class Map {
 		return targetView;
 	}
 
-	public int getCoordsX(int rx) {
-		return (rx - (rx % _cellSize)) / _cellSize;
+	public int getCoordsX(float rx) {
+		int x = Math.round(rx);
+
+		return (x - (x % _cellSize)) / _cellSize;
 	}
 
-	public int getCoordsY(int ry) {
-		return (ry - (ry % _cellSize)) / _cellSize;
+	public int getCoordsY(float ry) {
+		int y = Math.round(ry);
+
+		return (y - (y % _cellSize)) / _cellSize;
 	}
 
 	public void focusPlayer(Player player) {
@@ -360,15 +364,15 @@ public class Map {
 	}
 
 	public boolean isCellStart(int x, int y) {
-		return getCell(x, y) != Constants.MAP_SYMBOL_START;
+		return getCell(x, y) == Constants.MAP_SYMBOL_START;
 	}
 
 	public boolean isCellEnd(int x, int y) {
-		return getCell(x, y) != Constants.MAP_SYMBOL_END;
+		return getCell(x, y) == Constants.MAP_SYMBOL_END;
 	}
 
 	public boolean isCellRoad(int x, int y) {
-		return getCell(x, y) != Constants.MAP_SYMBOL_ROAD;
+		return getCell(x, y) == Constants.MAP_SYMBOL_ROAD;
 	}
 
 	public Position[] getStartCells() {
@@ -412,4 +416,82 @@ public class Map {
 		return _cellPaints.get(cell);
 	}
 
+	/**
+	 * Returns int-coords of cells you pass through between real coordinates
+	 * x1,y1 to x2,y2.
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
+	public Position[] getCellsThrough(float x1, float y1, float x2, float y2) {
+		List<Position> positions = new ArrayList<Position>();
+
+		Float[] ab = getLineEquation(x1, y1, x2, y2);
+		float x = x1;
+		float y = y1;
+		int stepX = ab[1] == null ? 0 : ((x1 > x2 ? -1 : +1) * (_cellSize / 2));
+		int stepY = ab[0] == 0 ? 0 : ((y1 > y2 ? -1 : +1) * (_cellSize / 2));
+		boolean finish = false;
+		while (!finish) {
+			int i = getCoordsX(x);
+			int j = getCoordsY(y);
+			Position position = new Position(i, j);
+			if (!positions.contains(position)) {
+				positions.add(position);
+			}
+			x += stepX;
+			if (ab[0] == 0) {
+				y = ab[1];
+			} else if (ab[1] == null) {
+				y += stepY;
+			} else {
+				y += stepY;
+				float newY = ab[0] * x + ab[1];
+				if ((y1 < y2 && y > newY) || (y1 > y2 && y < newY)) {
+					y = newY;
+				} else {
+					// Calculate x from y
+					x = (y - ab[1]) / ab[0];
+				}
+			}
+			if ((x1 <= x2 && x > x2) || (x1 >= x2 && x < x2) || (y1 <= y2 && y > y2) || (y1 >= y2 && y < y2)) {
+				finish = true;
+			}
+		}
+
+		return positions.toArray(new Position[] {});
+	}
+
+	/**
+	 * Returns [a,b] such as y = a*x + b for the line given If line is vertical,
+	 * returns [x,null]
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
+	private static Float[] getLineEquation(float x1, float y1, float x2, float y2) {
+		if (x1 == x2) {
+			return new Float[] { x1, null };
+		}
+		// Cas D horizontale : y1 == y2 ==> [0, y]
+		else if (y1 == y2) {
+			return new Float[] { 0f, y1 };
+		}
+		// Cas général
+		else {
+			// y2-y1 = a*(x2-x1) ==>
+			float a = (y2 - y1) / (x2 - x1);
+			// y1*x2 - y2*x1 = a*x1*x2 + b*x2 - a*x2*x1 - b*x1 = b*(x2-x1) ==>
+			float b = (y1 * x2 - y2 * x1) / (x2 - x1);
+
+			return new Float[] { a, b };
+		}
+
+	}
 }

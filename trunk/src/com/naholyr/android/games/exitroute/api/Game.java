@@ -1,6 +1,8 @@
 package com.naholyr.android.games.exitroute.api;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,7 +63,7 @@ public class Game {
 		params.map.drawPlayers(params.players);
 	}
 
-	public void run() {
+	public void run(Activity launcher) {
 		Player player = getCurrentPlayer();
 		params.map.focusPlayer(player);
 		Position[] targets = player.getTargets(params.players);
@@ -74,11 +76,11 @@ public class Game {
 
 		// Add behaviors
 		for (int i = 0; i < targetViews.length; i++) {
-			setTargetViewBehaviors(targetViews, i);
+			setTargetViewBehaviors(launcher, targetViews, i);
 		}
 	}
 
-	private void setTargetViewBehaviors(final TargetView[] views, final int i) {
+	private void setTargetViewBehaviors(final Activity launcher, final TargetView[] views, final int i) {
 		final Player player = getCurrentPlayer();
 		final int savedX = params.map.getRealX(Math.max(0, player.position.x - Math.abs(player.speed.x) - player.maxAcceleration));
 		final int savedY = params.map.getRealY(Math.max(0, player.position.y - Math.abs(player.speed.y) - player.maxAcceleration));
@@ -131,7 +133,9 @@ public class Game {
 					float x2 = params.map.getRealXCenter(player.position.x);
 					float y2 = params.map.getRealYCenter(player.position.y);
 					canvas.drawLine(x1, y1, x2, y2, paint);
-					if (!params.map.isCellAccessible(x, y)) {
+					// If player is on road, and target is not accessible,
+					// display a warning
+					if (params.map.isCellAccessible(player.position.x, player.position.y) && !params.map.isCellAccessible(x, y)) {
 						Bitmap warningImg = BitmapFactory.decodeResource(view.getContext().getResources(), R.drawable.warning);
 						canvas.drawBitmap(warningImg, view.getLeft(), view.getTop(), new Paint());
 					}
@@ -145,6 +149,40 @@ public class Game {
 				try {
 					int x = params.map.getCoordsX(views[i].getLeft());
 					int y = params.map.getCoordsY(views[i].getTop());
+					boolean resetSpeedAfterMove = false;
+					boolean doNotRunNextTurn = false;
+					float x1 = params.map.getRealXCenter(player.position.x);
+					float y1 = params.map.getRealYCenter(player.position.y);
+					float x2 = params.map.getRealXCenter(x);
+					float y2 = params.map.getRealYCenter(y);
+					Position[] cellsThrough = params.map.getCellsThrough(x1, y1, x2, y2);
+					if (params.map.isCellAccessible(player.position.x, player.position.y)) {
+						// Player is on road : check the path
+						// Get cells the player will get through, and check if
+						// one is inaccessible
+						for (int k = 0; k < cellsThrough.length; k++) {
+							Position cell = cellsThrough[k];
+							if (!cell.equals(player.position)) {
+								// Check if player is on road end : winner !
+								if (params.map.isCellEnd(cell.x, cell.y)) {
+									// End game
+									showWinner(Game.this, launcher, view.getContext(), player);
+								} else if (!params.map.isCellAccessible(cell.x, cell.y)) {
+									showAlertPosition(Game.this, launcher, view.getContext(), player);
+									doNotRunNextTurn = true;
+									resetSpeedAfterMove = true;
+									x = cell.x;
+									y = cell.y;
+									break;
+								}
+							}
+						}
+					} else {
+						// Player is out road, no acceleration allowed
+						resetSpeedAfterMove = true;
+						// And he cannot win ! we don't check end cell in this
+						// case
+					}
 					// Redraw saved original bitmap rect
 					params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
 					// Draw a thin line between position and target, and a
@@ -159,21 +197,8 @@ public class Game {
 							.getRealYCenter(player.position.y), 3.0f, paint);
 					// Move player
 					player.moveTo(x, y);
-					if (!params.map.isCellAccessible(x, y)) {
-						// Exit route ! => Speed = 0 + alert
+					if (resetSpeedAfterMove) {
 						player.speed = new Speed(0, 0);
-						AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-						builder.setMessage("Sortie de route ! Vitesse = 0");
-						builder.setTitle(R.string.error);
-						builder.setCancelable(true);
-						builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.cancel();
-							}
-						});
-						builder.setIcon(android.R.drawable.ic_dialog_alert);
-						AlertDialog alert = builder.create();
-						alert.show();
 					}
 					// Redraw
 					params.map.drawPlayer(player);
@@ -182,13 +207,20 @@ public class Game {
 						((ViewGroup) views[j].getParent()).removeView(views[j]);
 					}
 					// Next turn
-					Game.this.nextPlayer();
-					Game.this.run();
+					if (!doNotRunNextTurn) {
+						Game.this.nextTurn(launcher);
+					}
 				} catch (Exception e) {
 					Game.this.handleError(e);
 				}
 			}
+
 		});
+	}
+
+	private void nextTurn(Activity launcher) {
+		nextPlayer();
+		run(launcher);
 	}
 
 	private void handleError(Throwable e) {
@@ -197,6 +229,38 @@ public class Game {
 		} else {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static void showAlertPosition(final Game game, final Activity launcher, Context context, Player player) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		// TODO Localize
+		builder.setMessage("Vous êtes sorti de la route ! vous revenez à la vitesse minimale tant que vous n'êtes pas revenu sur la route.");
+		builder.setTitle("Sortie de route !");
+		builder.setIcon(android.R.drawable.ic_dialog_alert);
+		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+				game.nextTurn(launcher);
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private static void showWinner(final Game game, final Activity launcher, Context context, Player player) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		// TODO Localize
+		builder.setMessage("Vous avez gagné la course !");
+		builder.setTitle("Vainqueur !");
+		builder.setIcon(android.R.drawable.ic_dialog_alert);
+		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+				launcher.finish();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 }

@@ -58,7 +58,7 @@ public class Game extends Activity {
 							}
 						};
 						game.draw((ViewGroup) findViewById(R.id.GameFrame));
-						game.run();
+						game.run(Game.this);
 					} catch (Exception e) {
 						Game.this.handleError(e);
 					}

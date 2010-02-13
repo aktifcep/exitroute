@@ -2,7 +2,6 @@ package com.naholyr.android.games.exitroute.api;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -166,10 +165,10 @@ public class Game {
 								// Check if player is on road end : winner !
 								if (params.map.isCellEnd(cell.x, cell.y)) {
 									// End game
-									showWinner(Game.this, launcher, view.getContext(), player);
+									showWinner(Game.this, launcher, player);
 								} else if (!params.map.isCellAccessible(cell.x, cell.y)) {
-									showAlertPosition(Game.this, launcher, view.getContext(), player);
-									doNotRunNextTurn = true;
+									showAlertPosition(Game.this, launcher, player);
+									doNotRunNextTurn = false; // FIXME interrupting the game bring FC :(
 									resetSpeedAfterMove = true;
 									x = cell.x;
 									y = cell.y;
@@ -183,18 +182,18 @@ public class Game {
 						// And he cannot win ! we don't check end cell in this
 						// case
 					}
+					Canvas canvas = params.map.getImageView().mImageView.mCanvas;
 					// Redraw saved original bitmap rect
-					params.map.getImageView().mImageView.mCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+					canvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
 					// Draw a thin line between position and target, and a
 					// marker for original position
 					Paint paint = new Paint();
 					paint.setStrokeWidth(2.0f);
 					paint.setColor(player.color);
 					paint.setStyle(Paint.Style.FILL_AND_STROKE);
-					params.map.getImageView().mImageView.mCanvas.drawLine(params.map.getRealXCenter(player.position.x), params.map
-							.getRealYCenter(player.position.y), params.map.getRealXCenter(x), params.map.getRealYCenter(y), paint);
-					params.map.getImageView().mImageView.mCanvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map
-							.getRealYCenter(player.position.y), 3.0f, paint);
+					canvas.drawLine(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), params.map
+							.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+					canvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), 3.0f, paint);
 					// Move player
 					player.moveTo(x, y);
 					if (resetSpeedAfterMove) {
@@ -204,6 +203,7 @@ public class Game {
 					params.map.drawPlayer(player);
 					// Remove all targets
 					for (int j = 0; j < views.length; j++) {
+						views[j].destroyDrawingCache();
 						((ViewGroup) views[j].getParent()).removeView(views[j]);
 					}
 					// Next turn
@@ -218,7 +218,7 @@ public class Game {
 		});
 	}
 
-	private void nextTurn(Activity launcher) {
+	public void nextTurn(Activity launcher) {
 		nextPlayer();
 		run(launcher);
 	}
@@ -231,8 +231,8 @@ public class Game {
 		}
 	}
 
-	private static void showAlertPosition(final Game game, final Activity launcher, Context context, Player player) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+	private static void showAlertPosition(final Game game, final Activity launcher, Player player) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(launcher);
 		// TODO Localize
 		builder.setMessage("Vous êtes sorti de la route ! vous revenez à la vitesse minimale tant que vous n'êtes pas revenu sur la route.");
 		builder.setTitle("Sortie de route !");
@@ -240,15 +240,16 @@ public class Game {
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				game.nextTurn(launcher);
+				// FIXME interrupt game before display alert
+				//game.nextTurn(launcher);
 			}
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
 
-	private static void showWinner(final Game game, final Activity launcher, Context context, Player player) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+	private static void showWinner(final Game game, final Activity launcher, Player player) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(launcher);
 		// TODO Localize
 		builder.setMessage("Vous avez gagné la course !");
 		builder.setTitle("Vainqueur !");

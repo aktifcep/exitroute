@@ -15,7 +15,7 @@ public class Constants {
 
 	public static final int CELL_SIZE = 30;
 
-	public static final String RESOURCE_PACKAGE = "com.naholyr.android.games.exitroute";
+	public static final String RESOURCE_PACKAGE = "com.naholyr.android.games.offroad";
 
 	public static final int INITIAL_SPEED_X = 0;
 	public static final int INITIAL_SPEED_Y = 0;

@@ -23,52 +23,40 @@ import com.naholyr.android.games.offroad.view.TargetView;
 
 public class Map {
 
+	// Information & game attributes
 	private String _name;
 	private Dimension _size;
 
-	private static Context _context;
-	private BitmapDrawable _drawable;
-	private ScrollingImageView gameView;
-
-	private static java.util.Map<String, Map> _maps = new HashMap<String, Map>();
-
-	private int _viewWidth = 0;
-	private int _viewHeight = 0;
-	private ViewGroup _layout;
-	private boolean _gotViewSizeFromLayout = false;
-	private int _cellSize = Constants.CELL_SIZE;
-
+	// Map info
 	private char[][] _cells;
 	private Position[] _starts;
 	private Position[] _ends;
 
+	// View cache
+	private ScrollingImageView gameView;
+	private BitmapDrawable _drawable;
 	private java.util.Map<Player, PlayerView> _playerViews = new HashMap<Player, PlayerView>();
 
-	public Map(String name, InputStream mapInfo, BitmapDrawable drawable) {
-		if (_context == null) {
-			throw new RuntimeException("Context undefined. Call Map.setContext(Context) before creating a new map !");
-		}
+	// View dimensions
+	private int _viewWidth = 0;
+	private int _viewHeight = 0;
+	private boolean _gotViewSizeFromLayout = false;
+	private int _cellSize = Constants.CELL_SIZE;
 
+	public Map(Resources resources, String name, InputStream mapInfo, BitmapDrawable drawable) {
 		_name = name;
 		setDrawable(drawable);
-		setMapInfo(mapInfo, _context.getResources());
+		setMapInfo(mapInfo, resources);
 	}
 
-	public static void setContext(Context context) {
-		_context = context;
-	}
+	public static Map get(Resources resources, String mapName) {
+		int drawableResId = resources.getIdentifier(mapName, "drawable", Constants.RESOURCE_PACKAGE);
+		int rawResId = resources.getIdentifier(mapName, "raw", Constants.RESOURCE_PACKAGE);
+		BitmapDrawable drawable = (BitmapDrawable) resources.getDrawable(drawableResId);
+		InputStream mapInfo = resources.openRawResource(rawResId);
+		Map map = new Map(resources, mapName, mapInfo, drawable);
 
-	public static Map get(String mapName) {
-		if (!_maps.containsKey(mapName)) {
-			int drawableResId = _context.getResources().getIdentifier(mapName, "drawable", _context.getPackageName());
-			int rawResId = _context.getResources().getIdentifier(mapName, "raw", _context.getPackageName());
-			BitmapDrawable drawable = (BitmapDrawable) _context.getResources().getDrawable(drawableResId);
-			InputStream mapInfo = _context.getResources().openRawResource(rawResId);
-			Map map = new Map(mapName, mapInfo, drawable);
-			_maps.put(mapName, map);
-		}
-
-		return _maps.get(mapName);
+		return map;
 	}
 
 	private void setViewSize(int w, int h) {
@@ -178,17 +166,18 @@ public class Map {
 	}
 
 	public int getRealWidth() {
-		return _drawable.getMinimumWidth();
+		return gameView.mImageView.mBitmap.getWidth();
 	}
 
 	public int getRealHeight() {
-		return _drawable.getMinimumHeight();
+		return gameView.mImageView.mBitmap.getHeight();
 	}
 
 	private void refreshViewSize() {
-		if (!_gotViewSizeFromLayout && _layout != null) {
-			int w = _layout.getMeasuredWidth();
-			int h = _layout.getMeasuredHeight();
+		ViewGroup layout = (ViewGroup) gameView.getParent();
+		if (!_gotViewSizeFromLayout && layout != null) {
+			int w = layout.getMeasuredWidth();
+			int h = layout.getMeasuredHeight();
 			if (w != 0 && h != 0) {
 				setViewSize(w, h);
 				_gotViewSizeFromLayout = true;
@@ -214,7 +203,7 @@ public class Map {
 
 	public void draw(ScrollingImageView gameView, boolean showGrid) {
 		this.gameView = gameView;
-		
+
 		// FIXME Dynamic size
 		setViewSize(Constants.DEFAULT_MAP_WIDTH, Constants.DEFAULT_MAP_HEIGHT);
 
@@ -272,17 +261,17 @@ public class Map {
 		scrollToCenter(player.position);
 	}
 
-	public void drawPlayers(Player[] players) {
+	public void drawPlayers(Context context, Player[] players) {
 		for (int i = 0; i < players.length; i++) {
-			drawPlayer(players[i]);
+			drawPlayer(context, players[i]);
 		}
 	}
 
-	public void drawPlayer(Player player) {
+	public void drawPlayer(Context context, Player player) {
 		int rx = getRealX(player.position.x);
 		int ry = getRealY(player.position.y);
 		if (!_playerViews.containsKey(player)) {
-			PlayerView view = new PlayerView(_context, player, _cellSize);
+			PlayerView view = new PlayerView(context, player, _cellSize);
 			gameView.addView(view);
 			_playerViews.put(player, view);
 		} else {
@@ -295,14 +284,14 @@ public class Map {
 		return gameView;
 	}
 
-	public TargetView drawTarget(Position position) {
-		return drawTarget(position.x, position.y);
+	public TargetView drawTarget(Context context, Position position) {
+		return drawTarget(context, position.x, position.y);
 	}
 
-	public TargetView drawTarget(int x, int y) {
+	public TargetView drawTarget(Context context, int x, int y) {
 		int rx = getRealX(x);
 		int ry = getRealY(y);
-		TargetView targetView = new TargetView(_context, rx, ry, _cellSize);
+		TargetView targetView = new TargetView(context, rx, ry, _cellSize);
 		gameView.addView(targetView);
 
 		return targetView;

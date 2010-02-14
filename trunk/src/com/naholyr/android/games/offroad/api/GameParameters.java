@@ -1,5 +1,7 @@
 package com.naholyr.android.games.offroad.api;
 
+import android.content.res.Resources;
+
 public class GameParameters {
 
 	public Map map;
@@ -18,12 +20,12 @@ public class GameParameters {
 		this.map = map;
 	}
 
-	public GameParameters(String mapName, Player[] players) {
-		this(Map.get(mapName), players);
+	public GameParameters(Resources resources, String mapName, Player[] players) {
+		this(Map.get(resources, mapName), players);
 	}
 
-	public GameParameters(String mapName, int nbPlayers) {
-		this(Map.get(mapName), nbPlayers);
+	public GameParameters(Resources resources, String mapName, int nbPlayers) {
+		this(Map.get(resources, mapName), nbPlayers);
 	}
 
 }

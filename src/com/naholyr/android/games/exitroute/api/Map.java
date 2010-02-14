@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -25,7 +26,7 @@ public class Map {
 
 	private static Context _context;
 	private BitmapDrawable _drawable;
-	private ScrollingImageView _scrollImageView;
+	private ScrollingImageView gameView;
 
 	private static java.util.Map<String, Map> _maps = new HashMap<String, Map>();
 
@@ -211,28 +212,15 @@ public class Map {
 		return _name;
 	}
 
-	public void draw(ViewGroup layout, boolean showGrid) {
-		_layout = layout;
-		// If layout has already bean measured, we store its dimensions
-		if (layout.getMeasuredWidth() != 0 && layout.getMeasuredHeight() != 0) {
-			setViewSize(layout.getMeasuredWidth(), layout.getMeasuredHeight());
-			_gotViewSizeFromLayout = true;
-		}
-		// Otherwise, we just take screen size, and remember that we should
-		// later use real layout's dimensions for more precision
-		else {
-			setViewSize(Constants.DEFAULT_MAP_WIDTH, Constants.DEFAULT_MAP_HEIGHT);
-			_gotViewSizeFromLayout = false;
-		}
-
-		// Draw image
-		_scrollImageView = new ScrollingImageView(_context, _drawable);
-
-		layout.addView(_scrollImageView);
+	public void draw(ScrollingImageView gameView, boolean showGrid) {
+		this.gameView = gameView;
+		
+		// FIXME dynamic size
+		setViewSize(Constants.DEFAULT_MAP_WIDTH, Constants.DEFAULT_MAP_HEIGHT);
 
 		// Draw grid
 		if (showGrid) {
-			Canvas canvas = _scrollImageView.mImageView.mCanvas;
+			Canvas canvas = gameView.mImageView.mCanvas;
 
 			for (int i = 0; i < _size.x; i++) {
 				for (int j = 0; j < _size.y; j++) {
@@ -254,7 +242,7 @@ public class Map {
 	}
 
 	public void scrollToReal(int x, int y) {
-		_scrollImageView.scrollTo(x, y);
+		gameView.scrollTo(x, y);
 	}
 
 	public void scrollTo(int x, int y) {
@@ -295,7 +283,7 @@ public class Map {
 		int ry = getRealY(player.position.y);
 		if (!_playerViews.containsKey(player)) {
 			PlayerView view = new PlayerView(_context, player, _cellSize);
-			_scrollImageView.addView(view);
+			gameView.addView(view);
 			_playerViews.put(player, view);
 		} else {
 			PlayerView view = _playerViews.get(player);
@@ -304,7 +292,7 @@ public class Map {
 	}
 
 	public ScrollingImageView getImageView() {
-		return _scrollImageView;
+		return gameView;
 	}
 
 	public TargetView drawTarget(Position position) {
@@ -315,7 +303,7 @@ public class Map {
 		int rx = getRealX(x);
 		int ry = getRealY(y);
 		TargetView targetView = new TargetView(_context, rx, ry, _cellSize);
-		_scrollImageView.addView(targetView);
+		gameView.addView(targetView);
 
 		return targetView;
 	}
@@ -494,4 +482,9 @@ public class Map {
 		}
 
 	}
+
+	public Bitmap getBitmap() {
+		return _drawable.getBitmap();
+	}
+
 }

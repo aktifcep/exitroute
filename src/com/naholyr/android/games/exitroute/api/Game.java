@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.view.ViewGroup;
 
 import com.naholyr.android.games.exitroute.R;
+import com.naholyr.android.games.exitroute.view.GameView;
 import com.naholyr.android.games.exitroute.view.TargetView;
 
 public class Game {
@@ -25,6 +26,8 @@ public class Game {
 	}
 
 	public ErrorListener errorListener = null;
+
+	private TargetView[] targetViews;
 
 	public Game(GameParameters gameParameters, int playerIndex) {
 		params = gameParameters;
@@ -56,8 +59,8 @@ public class Game {
 		return _currentPlayer;
 	}
 
-	public void draw(ViewGroup layout) {
-		params.map.draw(layout, true);
+	public void draw(GameView gameView) {
+		params.map.draw(gameView, true);
 		params.map.getImageView().invalidate();
 		params.map.drawPlayers(params.players);
 	}
@@ -67,8 +70,16 @@ public class Game {
 		params.map.focusPlayer(player);
 		Position[] targets = player.getTargets(params.players);
 
+		// Remove all existing targets
+		if (targetViews != null) {
+			for (int i = 0; i < targetViews.length; i++) {
+				if (targetViews[i] != null) {
+					((ViewGroup) targetViews[i].getParent()).removeView(targetViews[i]);
+				}
+			}
+		}
 		// Generate target views
-		TargetView[] targetViews = new TargetView[targets.length];
+		targetViews = new TargetView[targets.length];
 		for (int i = 0; i < targets.length; i++) {
 			targetViews[i] = params.map.drawTarget(targets[i]);
 		}
@@ -94,7 +105,7 @@ public class Game {
 				try {
 					view.reset(true);
 					params.map.getView(player).setAlpha(255);
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
 			}
@@ -138,7 +149,7 @@ public class Game {
 						Bitmap warningImg = BitmapFactory.decodeResource(view.getContext().getResources(), R.drawable.warning);
 						canvas.drawBitmap(warningImg, view.getLeft(), view.getTop(), new Paint());
 					}
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
 			}
@@ -167,8 +178,8 @@ public class Game {
 									// End game
 									showWinner(Game.this, launcher, player);
 								} else if (!params.map.isCellAccessible(cell.x, cell.y)) {
+									doNotRunNextTurn = true; // FIXME interrupting the game bring FC :(
 									showAlertPosition(Game.this, launcher, player);
-									doNotRunNextTurn = false; // FIXME interrupting the game bring FC :(
 									resetSpeedAfterMove = true;
 									x = cell.x;
 									y = cell.y;
@@ -201,16 +212,12 @@ public class Game {
 					}
 					// Redraw
 					params.map.drawPlayer(player);
-					// Remove all targets
-					for (int j = 0; j < views.length; j++) {
-						views[j].destroyDrawingCache();
-						((ViewGroup) views[j].getParent()).removeView(views[j]);
-					}
 					// Next turn
 					if (!doNotRunNextTurn) {
 						Game.this.nextTurn(launcher);
 					}
-				} catch (Exception e) {
+					return;
+				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
 			}
@@ -241,7 +248,7 @@ public class Game {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 				// FIXME interrupt game before display alert
-				//game.nextTurn(launcher);
+				game.nextTurn(launcher);
 			}
 		});
 		AlertDialog alert = builder.create();

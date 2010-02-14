@@ -178,8 +178,8 @@ public class Game {
 									// End game
 									showWinner(Game.this, launcher, player);
 								} else if (!params.map.isCellAccessible(cell.x, cell.y)) {
-									doNotRunNextTurn = true; // FIXME interrupting the game bring FC :(
-									showAlertPosition(Game.this, launcher, player);
+									doNotRunNextTurn = true;
+									showAlertPosition(Game.this, launcher, player, true);
 									resetSpeedAfterMove = true;
 									x = cell.x;
 									y = cell.y;
@@ -238,7 +238,7 @@ public class Game {
 		}
 	}
 
-	private static void showAlertPosition(final Game game, final Activity launcher, Player player) {
+	private static void showAlertPosition(final Game game, final Activity launcher, Player player, final boolean nextTurnOnCancel) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(launcher);
 		builder.setMessage(R.string.alert_exitroute_description);
 		builder.setTitle(R.string.alert_exitroute_title);
@@ -246,8 +246,9 @@ public class Game {
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				// FIXME interrupt game before display alert
-				game.nextTurn(launcher);
+				if (nextTurnOnCancel) {
+					game.nextTurn(launcher);
+				}
 			}
 		});
 		AlertDialog alert = builder.create();

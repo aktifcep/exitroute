@@ -46,7 +46,7 @@ public class Main extends Activity {
 	}
 
 	private void newLocalGame() {
-		int nbPlayers = 2; // FIXME
+		int nbPlayers = 2; // FIXME Choose number of players
 
 		Intent intent = new Intent(this, Constants.NEW_GAME_ACTIVITY);
 		intent.putExtra(Constants.EXTRA_NB_PLAYERS, nbPlayers);

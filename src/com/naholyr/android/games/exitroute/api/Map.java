@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -15,6 +16,7 @@ import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 
+import com.naholyr.android.games.exitroute.R;
 import com.naholyr.android.games.exitroute.view.PlayerView;
 import com.naholyr.android.games.exitroute.view.ScrollingImageView;
 import com.naholyr.android.games.exitroute.view.TargetView;
@@ -49,7 +51,7 @@ public class Map {
 
 		_name = name;
 		setDrawable(drawable);
-		setMapInfo(mapInfo);
+		setMapInfo(mapInfo, _context.getResources());
 	}
 
 	public static void setContext(Context context) {
@@ -78,7 +80,7 @@ public class Map {
 		setDrawable(drawable, drawable.getMinimumWidth(), drawable.getMinimumHeight());
 	}
 
-	private void setMapInfo(InputStream description) {
+	private void setMapInfo(InputStream description, Resources resources) {
 		_cells = new char[_size.x][_size.y];
 		try {
 			description.reset();
@@ -146,17 +148,15 @@ public class Map {
 			}
 			// Check and store start/end information
 			if (starts.size() == 0) {
-				// TODO localize
-				throw new RuntimeException("Map has no start position !");
+				throw new RuntimeException(resources.getString(R.string.error_no_start));
 			}
 			if (ends.size() == 0) {
-				// TODO localize
-				throw new RuntimeException("Map has no end position !");
+				throw new RuntimeException(resources.getString(R.string.error_no_end));
 			}
 			_starts = starts.toArray(new Position[] {});
 			_ends = ends.toArray(new Position[] {});
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(resources.getString(R.string.error_map_io));
 		}
 		return;
 	}
@@ -215,7 +215,7 @@ public class Map {
 	public void draw(ScrollingImageView gameView, boolean showGrid) {
 		this.gameView = gameView;
 		
-		// FIXME dynamic size
+		// FIXME Dynamic size
 		setViewSize(Constants.DEFAULT_MAP_WIDTH, Constants.DEFAULT_MAP_HEIGHT);
 
 		// Draw grid

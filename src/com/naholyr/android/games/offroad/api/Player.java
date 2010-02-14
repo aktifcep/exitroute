@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.api;
+package com.naholyr.android.games.offroad.api;
 
 import java.util.ArrayList;
 import java.util.List;

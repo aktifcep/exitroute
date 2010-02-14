@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.view;
+package com.naholyr.android.games.offroad.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;

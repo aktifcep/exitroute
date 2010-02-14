@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.view;
+package com.naholyr.android.games.offroad.view;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import com.naholyr.android.games.exitroute.R;
+import com.naholyr.android.games.offroad.R;
 
 public class TargetView extends TileView implements OnTouchListener {
 

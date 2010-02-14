@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.api;
+package com.naholyr.android.games.offroad.api;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +16,10 @@ import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 
-import com.naholyr.android.games.exitroute.R;
-import com.naholyr.android.games.exitroute.view.PlayerView;
-import com.naholyr.android.games.exitroute.view.ScrollingImageView;
-import com.naholyr.android.games.exitroute.view.TargetView;
+import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.view.PlayerView;
+import com.naholyr.android.games.offroad.view.ScrollingImageView;
+import com.naholyr.android.games.offroad.view.TargetView;
 
 public class Map {
 

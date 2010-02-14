@@ -17,21 +17,16 @@ import android.view.Window;
 import com.naholyr.android.games.exitroute.R;
 import com.naholyr.android.games.exitroute.api.Constants;
 import com.naholyr.android.games.exitroute.api.GameParameters;
+import com.naholyr.android.games.exitroute.api.GameThread;
 import com.naholyr.android.games.exitroute.api.Map;
 import com.naholyr.android.games.exitroute.api.Player;
 import com.naholyr.android.games.exitroute.api.Position;
-import com.naholyr.android.games.exitroute.view.ScrollingImageView;
+import com.naholyr.android.games.exitroute.view.GameView;
 
 public class Game extends Activity {
 
-	private int _nbPlayers;
-
-	ScrollingImageView scrollImageView;
-
-	GameParameters gameParameters;
-
-	com.naholyr.android.games.exitroute.api.Game game;
-
+	private GameView gameView;
+	
 	/**
 	 * @see android.app.Activity#onCreate(Bundle)
 	 */
@@ -40,30 +35,35 @@ public class Game extends Activity {
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		setContentView(R.layout.game);
 
+		gameView = (GameView) findViewById(R.id.GameView);
+		GameThread gameThread = gameView.getThread();
+		gameThread.errorListener = new GameThread.ErrorListener() {
+			@Override
+			public void handle(Throwable e) {
+				Game.this.handleError(e);
+			}
+		};
+		
 		try {
-			initializeData();
+	        if (savedInstanceState == null) {
+	            // we were just launched: set up a new game
+	        	GameParameters params = initializeData();
+	        	gameThread.initialize(params);
+	    		params.map.draw(gameView, true);
+	    		params.map.getImageView().invalidate();
+	    		params.map.drawPlayers(params.players);
+	        	gameThread.setState(GameThread.STATE_READY);
+				gameThread.setRunning(true);
+				gameThread.setState(GameThread.STATE_RUNNING);
+				gameThread.start();
+	        } else {
+	            // we are being restored: resume a previous game
+	            gameThread.restoreState(savedInstanceState);
+	        }
 
-			setContentView(R.layout.game);
-
-			((ViewGroup) findViewById(R.id.GameFrame)).post(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						game = new com.naholyr.android.games.exitroute.api.Game(gameParameters);
-						game.errorListener = new com.naholyr.android.games.exitroute.api.Game.ErrorListener() {
-							@Override
-							public void handle(Throwable e) {
-								Game.this.handleError(e);
-							}
-						};
-						game.draw((ViewGroup) findViewById(R.id.GameFrame));
-						game.run(Game.this);
-					} catch (Exception e) {
-						Game.this.handleError(e);
-					}
-				}
-			});
 		} catch (Exception e) {
 			handleError(e);
 		}
@@ -109,20 +109,19 @@ public class Game extends Activity {
 		alert.show();
 	}
 
-	private void initializeData() throws Exception {
+	private GameParameters initializeData() throws Exception {
 		Map.setContext(this);
 
 		// Retrieve nb players
-		Integer nbPlayersNullable = (Integer) getIntent().getExtras().get(Constants.EXTRA_NB_PLAYERS);
-		if (nbPlayersNullable == null || nbPlayersNullable < 1 || nbPlayersNullable > Constants.MAX_PLAYERS) {
+		Integer nbPlayers = (Integer) getIntent().getExtras().get(Constants.EXTRA_NB_PLAYERS);
+		if (nbPlayers == null || nbPlayers < 1 || nbPlayers > Constants.MAX_PLAYERS) {
 			throw new Exception(getString(R.string.error_invalid_nb_players));
 		}
-		_nbPlayers = nbPlayersNullable.intValue();
 
 		// Generate game parameters
-		gameParameters = new GameParameters("map1", _nbPlayers);
+		GameParameters gameParameters = new GameParameters("map1", nbPlayers);
 		Position[] starts = gameParameters.map.getStartCells();
-		if (starts.length < _nbPlayers) {
+		if (starts.length < nbPlayers) {
 			// TODO localize
 			throw new RuntimeException("Not enough start positions for the expected number of players !");
 		}
@@ -131,26 +130,40 @@ public class Game extends Activity {
 		for (int i = 0; i < starts.length; i++) {
 			startsList.add(starts[i]);
 		}
-		Position[] randomStarts = new Position[_nbPlayers];
+		Position[] randomStarts = new Position[nbPlayers];
 		for (int i = 0; i < randomStarts.length; i++) {
 			int k = (int) Math.floor(Math.random() * startsList.size());
 			randomStarts[i] = startsList.get(k);
 			startsList.remove(k);
 		}
 		// Generate players
-		for (int i = 0; i < _nbPlayers; i++) {
+		for (int i = 0; i < nbPlayers; i++) {
 			Player player = new Player("Player " + (i + 1));
 			player.color = Constants.PLAYER_COLORS[i % Constants.CAR_DRAWABLES.length];
 			player.setPosition(randomStarts[i]);
 			player.setIcon(Constants.CAR_DRAWABLES[i % Constants.CAR_DRAWABLES.length], this);
 			gameParameters.players[i] = player;
 		}
+		
+		return gameParameters;
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		gameView.getThread().pause();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		gameView.getThread().saveState(outState);
 	}
 	
 }

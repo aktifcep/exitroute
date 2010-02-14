@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/GameFrame" android:layout_height="fill_parent"
-	android:layout_width="fill_parent" android:foregroundGravity="top|left">
-</FrameLayout>
+<com.naholyr.android.games.exitroute.view.GameView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:foregroundGravity="top|left" android:id="@+id/GameView">
+</com.naholyr.android.games.exitroute.view.GameView>

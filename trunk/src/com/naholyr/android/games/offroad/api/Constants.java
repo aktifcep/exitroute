@@ -1,7 +1,7 @@
-package com.naholyr.android.games.exitroute.api;
+package com.naholyr.android.games.offroad.api;
 
-import com.naholyr.android.games.exitroute.R;
-import com.naholyr.android.games.exitroute.activity.Game;
+import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.activity.Game;
 
 import android.app.Activity;
 

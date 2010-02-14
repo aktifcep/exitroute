@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.activity;
+package com.naholyr.android.games.offroad.activity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,14 +14,14 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.naholyr.android.games.exitroute.R;
-import com.naholyr.android.games.exitroute.api.Constants;
-import com.naholyr.android.games.exitroute.api.GameParameters;
-import com.naholyr.android.games.exitroute.api.Map;
-import com.naholyr.android.games.exitroute.api.Player;
-import com.naholyr.android.games.exitroute.api.Position;
-import com.naholyr.android.games.exitroute.view.GameView;
-import com.naholyr.android.games.exitroute.view.ScrollingImageView;
+import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.api.Constants;
+import com.naholyr.android.games.offroad.api.GameParameters;
+import com.naholyr.android.games.offroad.api.Map;
+import com.naholyr.android.games.offroad.api.Player;
+import com.naholyr.android.games.offroad.api.Position;
+import com.naholyr.android.games.offroad.view.GameView;
+import com.naholyr.android.games.offroad.view.ScrollingImageView;
 
 public class Game extends Activity {
 
@@ -47,8 +47,8 @@ public class Game extends Activity {
 				@Override
 				public void run() {
 					try {
-						com.naholyr.android.games.exitroute.api.Game game = gameView.getGame();
-						game.errorListener = new com.naholyr.android.games.exitroute.api.Game.ErrorListener() {
+						com.naholyr.android.games.offroad.api.Game game = gameView.getGame();
+						game.errorListener = new com.naholyr.android.games.offroad.api.Game.ErrorListener() {
 							@Override
 							public void handle(Throwable e) {
 								Game.this.handleError(e);

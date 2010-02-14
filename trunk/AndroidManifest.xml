@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest android:versionCode="1"
-	package="com.naholyr.android.games.exitroute" xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.naholyr.android.games.offroad" xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionName="@string/last_version" android:sharedUserId="@string/shared_user_id"
 	android:sharedUserLabel="@string/shared_user_id">
 	<application android:icon="@drawable/icon" android:label="@string/app_name">

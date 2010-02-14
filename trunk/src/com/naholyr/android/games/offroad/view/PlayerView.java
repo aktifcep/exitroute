@@ -1,8 +1,8 @@
-package com.naholyr.android.games.exitroute.view;
+package com.naholyr.android.games.offroad.view;
 
 import android.content.Context;
 
-import com.naholyr.android.games.exitroute.api.Player;
+import com.naholyr.android.games.offroad.api.Player;
 
 public class PlayerView extends TileView {
 

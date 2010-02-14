@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.api;
+package com.naholyr.android.games.offroad.api;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,9 +9,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.ViewGroup;
 
-import com.naholyr.android.games.exitroute.R;
-import com.naholyr.android.games.exitroute.view.GameView;
-import com.naholyr.android.games.exitroute.view.TargetView;
+import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.view.GameView;
+import com.naholyr.android.games.offroad.view.TargetView;
 
 public class Game {
 

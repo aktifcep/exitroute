@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.api;
+package com.naholyr.android.games.offroad.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 import android.content.Context;
 import android.content.Intent;
 
-import com.naholyr.android.games.exitroute.R;
+import com.naholyr.android.games.offroad.R;
 
 public class Util {
 

@@ -1,9 +1,9 @@
-package com.naholyr.android.games.exitroute.view;
+package com.naholyr.android.games.offroad.view;
 
 import android.content.Context;
 
-import com.naholyr.android.games.exitroute.api.Game;
-import com.naholyr.android.games.exitroute.api.GameParameters;
+import com.naholyr.android.games.offroad.api.Game;
+import com.naholyr.android.games.offroad.api.GameParameters;
 
 public class GameView extends ScrollingImageView {
 

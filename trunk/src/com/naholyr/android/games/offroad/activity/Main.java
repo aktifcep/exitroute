@@ -1,4 +1,4 @@
-package com.naholyr.android.games.exitroute.activity;
+package com.naholyr.android.games.offroad.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.naholyr.android.games.exitroute.R;
-import com.naholyr.android.games.exitroute.api.Constants;
-import com.naholyr.android.games.exitroute.api.Util;
+import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.api.Constants;
+import com.naholyr.android.games.offroad.api.Util;
 
 public class Main extends Activity {
 

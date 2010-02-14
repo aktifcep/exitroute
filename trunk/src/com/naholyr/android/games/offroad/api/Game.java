@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.naholyr.android.games.offroad.R;
@@ -70,7 +71,7 @@ public class Game {
 		params.map.focusPlayer(player);
 		Position[] targets = player.getTargets(params.players);
 
-		// Remove all existing targets
+		// Remove all existing target views
 		if (targetViews != null) {
 			for (int i = 0; i < targetViews.length; i++) {
 				if (targetViews[i] != null) {
@@ -78,19 +79,30 @@ public class Game {
 				}
 			}
 		}
+
 		// Generate target views
 		targetViews = new TargetView[targets.length];
-		for (int i = 0; i < targets.length; i++) {
+		for (int i = 0; i < targetViews.length; i++) {
 			targetViews[i] = params.map.drawTarget(launcher, targets[i]);
+			Player playerAt = params.map.getPlayerAt(targets[i].x, targets[i].y, params.players);
+			if (playerAt == null || playerAt == player) {
+				targetViews[i].setVisibility(View.VISIBLE);
+			} else {
+				targetViews[i].setVisibility(View.GONE);
+			}
 		}
 
 		// Add behaviors
 		for (int i = 0; i < targetViews.length; i++) {
-			setTargetViewBehaviors(launcher, targetViews, i);
+			if (targetViews[i] != null) {
+				setTargetViewBehaviors(launcher, targetViews, i);
+			}
 		}
+
+		return;
 	}
 
-	private void setTargetViewBehaviors(final Activity launcher, final TargetView[] views, final int i) {
+	private void setTargetViewBehaviors(final Activity launcher, final TargetView[] views, int i) {
 		final Player player = getCurrentPlayer();
 		final int savedX = params.map.getRealX(Math.max(0, player.position.x - Math.abs(player.speed.x) - player.maxAcceleration));
 		final int savedY = params.map.getRealY(Math.max(0, player.position.y - Math.abs(player.speed.y) - player.maxAcceleration));
@@ -108,6 +120,7 @@ public class Game {
 				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
+				return;
 			}
 
 			@Override
@@ -117,7 +130,7 @@ public class Game {
 					int y = params.map.getCoordsY(view.getTop());
 					// Unselect all other targets
 					for (int j = 0; j < views.length; j++) {
-						if (i == j) {
+						if (views[j] == null || views[j] == view) {
 							continue;
 						}
 						if (views[j].step == TargetView.STEP_CONFIRM) {
@@ -152,13 +165,14 @@ public class Game {
 				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
+				return;
 			}
 
 			@Override
 			public void onConfirm(TargetView view) {
 				try {
-					int x = params.map.getCoordsX(views[i].getLeft());
-					int y = params.map.getCoordsY(views[i].getTop());
+					int x = params.map.getCoordsX(view.getLeft());
+					int y = params.map.getCoordsY(view.getTop());
 					boolean resetSpeedAfterMove = false;
 					boolean doNotRunNextTurn = false;
 					float x1 = params.map.getRealXCenter(player.position.x);
@@ -216,13 +230,14 @@ public class Game {
 					if (!doNotRunNextTurn) {
 						Game.this.nextTurn(launcher);
 					}
-					return;
 				} catch (RuntimeException e) {
 					Game.this.handleError(e);
 				}
+				return;
 			}
 
 		});
+		return;
 	}
 
 	public void nextTurn(Activity launcher) {

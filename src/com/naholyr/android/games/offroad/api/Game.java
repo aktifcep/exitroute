@@ -62,7 +62,7 @@ public class Game {
 	public void draw(GameView gameView) {
 		params.map.draw(gameView, true);
 		params.map.getImageView().invalidate();
-		params.map.drawPlayers(params.players);
+		params.map.drawPlayers(gameView.getContext(), params.players);
 	}
 
 	public void run(Activity launcher) {
@@ -81,7 +81,7 @@ public class Game {
 		// Generate target views
 		targetViews = new TargetView[targets.length];
 		for (int i = 0; i < targets.length; i++) {
-			targetViews[i] = params.map.drawTarget(targets[i]);
+			targetViews[i] = params.map.drawTarget(launcher, targets[i]);
 		}
 
 		// Add behaviors
@@ -211,7 +211,7 @@ public class Game {
 						player.speed = new Speed(0, 0);
 					}
 					// Redraw
-					params.map.drawPlayer(player);
+					params.map.drawPlayer(view.getContext(), player);
 					// Next turn
 					if (!doNotRunNextTurn) {
 						Game.this.nextTurn(launcher);

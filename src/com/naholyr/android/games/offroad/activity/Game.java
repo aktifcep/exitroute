@@ -17,7 +17,6 @@ import android.view.Window;
 import com.naholyr.android.games.offroad.R;
 import com.naholyr.android.games.offroad.api.Constants;
 import com.naholyr.android.games.offroad.api.GameParameters;
-import com.naholyr.android.games.offroad.api.Map;
 import com.naholyr.android.games.offroad.api.Player;
 import com.naholyr.android.games.offroad.api.Position;
 import com.naholyr.android.games.offroad.view.GameView;
@@ -106,8 +105,6 @@ public class Game extends Activity {
 	}
 
 	private GameParameters initializeData() throws Exception {
-		Map.setContext(this);
-
 		// Retrieve nb players
 		Integer nbPlayers = (Integer) getIntent().getExtras().get(Constants.EXTRA_NB_PLAYERS);
 		if (nbPlayers == null || nbPlayers < 1 || nbPlayers > Constants.MAX_PLAYERS) {
@@ -115,7 +112,7 @@ public class Game extends Activity {
 		}
 
 		// Generate game parameters
-		GameParameters gameParameters = new GameParameters("map1", nbPlayers);
+		GameParameters gameParameters = new GameParameters(getResources(), "map1", nbPlayers);
 		Position[] starts = gameParameters.map.getStartCells();
 		if (starts.length < nbPlayers) {
 			throw new RuntimeException(getString(R.string.error_not_enough_starts));

@@ -19,11 +19,11 @@ public class TargetView extends TileView implements OnTouchListener {
 	public int step;
 
 	public interface Listener {
-		void onSelectTarget(TargetView view);
+		void onSelect(TargetView view);
 
-		void onConfirmTarget(TargetView view);
+		void onConfirm(TargetView view);
 
-		void onUnSelectTarget(TargetView view);
+		void onUnSelect(TargetView view);
 	}
 
 	private Listener _listener = null;
@@ -71,21 +71,21 @@ public class TargetView extends TileView implements OnTouchListener {
 
 	public void select() {
 		if (_listener != null) {
-			_listener.onSelectTarget(this);
+			_listener.onSelect(this);
 		}
 		step = STEP_CONFIRM;
 	}
 
 	public void unSelect() {
 		if (_listener != null) {
-			_listener.onUnSelectTarget(this);
+			_listener.onUnSelect(this);
 		}
 		step = STEP_SELECT;
 	}
 
 	public void confirmSelect() {
 		if (_listener != null) {
-			_listener.onConfirmTarget(this);
+			_listener.onConfirm(this);
 		} else {
 			// Default behavior
 			reset(true);

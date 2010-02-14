@@ -26,6 +26,10 @@ public class Game {
 
 	public ErrorListener errorListener = null;
 
+	private boolean isFinished = false;
+
+	private boolean isNextTurn;
+
 	public Game(GameParameters gameParameters, int playerIndex) {
 		params = gameParameters;
 		setCurrentPlayer(playerIndex);
@@ -63,19 +67,31 @@ public class Game {
 	}
 
 	public void run(Activity launcher) {
-		Player player = getCurrentPlayer();
-		params.map.focusPlayer(player);
-		Position[] targets = player.getTargets(params.players);
+		while (!isFinished) {
+			isNextTurn = false;
+			Player player = getCurrentPlayer();
+			params.map.focusPlayer(player);
+			Position[] targets = player.getTargets(params.players);
 
-		// Generate target views
-		TargetView[] targetViews = new TargetView[targets.length];
-		for (int i = 0; i < targets.length; i++) {
-			targetViews[i] = params.map.drawTarget(targets[i]);
-		}
+			// Generate target views
+			TargetView[] targetViews = new TargetView[targets.length];
+			for (int i = 0; i < targets.length; i++) {
+				targetViews[i] = params.map.drawTarget(targets[i]);
+			}
 
-		// Add behaviors
-		for (int i = 0; i < targetViews.length; i++) {
-			setTargetViewBehaviors(launcher, targetViews, i);
+			// Add behaviors : asynchronuous
+			for (int i = 0; i < targetViews.length; i++) {
+				setTargetViewBehaviors(launcher, targetViews, i);
+			}
+			// Wait for the "next turn" flag :)
+			while (!isNextTurn && !isFinished) {
+				// wait...
+			}
+			// Game is not finished, at this point it means it's next player's
+			// turn
+			if (!isFinished) {
+				nextPlayer();
+			}
 		}
 	}
 
@@ -90,7 +106,7 @@ public class Game {
 		views[i].setListener(new TargetView.Listener() {
 
 			@Override
-			public void onUnSelect(TargetView view) {
+			public void onUnSelectTarget(TargetView view) {
 				try {
 					view.reset(true);
 					params.map.getView(player).setAlpha(255);
@@ -100,7 +116,7 @@ public class Game {
 			}
 
 			@Override
-			public void onSelect(TargetView view) {
+			public void onSelectTarget(TargetView view) {
 				try {
 					int x = params.map.getCoordsX(view.getLeft());
 					int y = params.map.getCoordsY(view.getTop());
@@ -144,7 +160,7 @@ public class Game {
 			}
 
 			@Override
-			public void onConfirm(TargetView view) {
+			public void onConfirmTarget(TargetView view) {
 				try {
 					int x = params.map.getCoordsX(views[i].getLeft());
 					int y = params.map.getCoordsY(views[i].getTop());
@@ -166,9 +182,10 @@ public class Game {
 								if (params.map.isCellEnd(cell.x, cell.y)) {
 									// End game
 									showWinner(Game.this, launcher, player);
+									Game.this.isFinished = true;
 								} else if (!params.map.isCellAccessible(cell.x, cell.y)) {
 									showAlertPosition(Game.this, launcher, player);
-									doNotRunNextTurn = false; // FIXME interrupting the game bring FC :(
+									doNotRunNextTurn = true;
 									resetSpeedAfterMove = true;
 									x = cell.x;
 									y = cell.y;
@@ -208,7 +225,7 @@ public class Game {
 					}
 					// Next turn
 					if (!doNotRunNextTurn) {
-						Game.this.nextTurn(launcher);
+						Game.this.isNextTurn = true;
 					}
 				} catch (Exception e) {
 					Game.this.handleError(e);
@@ -240,8 +257,7 @@ public class Game {
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				// FIXME interrupt game before display alert
-				//game.nextTurn(launcher);
+				game.isNextTurn = true;
 			}
 		});
 		AlertDialog alert = builder.create();
@@ -257,7 +273,7 @@ public class Game {
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				launcher.finish();
+				game.isFinished = true;
 			}
 		});
 		AlertDialog alert = builder.create();

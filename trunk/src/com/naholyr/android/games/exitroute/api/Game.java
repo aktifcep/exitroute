@@ -240,9 +240,8 @@ public class Game {
 
 	private static void showAlertPosition(final Game game, final Activity launcher, Player player) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(launcher);
-		// TODO Localize
-		builder.setMessage("Vous êtes sorti de la route ! vous revenez à la vitesse minimale tant que vous n'êtes pas revenu sur la route.");
-		builder.setTitle("Sortie de route !");
+		builder.setMessage(R.string.alert_exitroute_description);
+		builder.setTitle(R.string.alert_exitroute_title);
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
@@ -257,9 +256,8 @@ public class Game {
 
 	private static void showWinner(final Game game, final Activity launcher, Player player) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(launcher);
-		// TODO Localize
-		builder.setMessage("Vous avez gagné la course !");
-		builder.setTitle("Vainqueur !");
+		builder.setMessage(R.string.alert_winner_description);
+		builder.setTitle(R.string.alert_winner_title);
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
 		builder.setNeutralButton(android.R.string.ok, new AlertDialog.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {

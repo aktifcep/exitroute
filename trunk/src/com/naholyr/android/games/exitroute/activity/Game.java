@@ -118,8 +118,7 @@ public class Game extends Activity {
 		GameParameters gameParameters = new GameParameters("map1", nbPlayers);
 		Position[] starts = gameParameters.map.getStartCells();
 		if (starts.length < nbPlayers) {
-			// TODO localize
-			throw new RuntimeException("Not enough start positions for the expected number of players !");
+			throw new RuntimeException(getString(R.string.error_not_enough_starts));
 		}
 		// Generate random start positions
 		List<Position> startsList = new Vector<Position>();
@@ -146,7 +145,7 @@ public class Game extends Activity {
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
+		// Do nothing, configuration change is ignored
 		super.onConfigurationChanged(newConfig);
 	}
 

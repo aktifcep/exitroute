@@ -25,4 +25,12 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="bug_report_subject">[ExitRoute] Bug report</string>
+    <string name="alert_exitroute_description">You're off the road! you return to the minimum speed until you're not back on the road.</string>
+    <string name="alert_exitroute_title">Off the road!</string>
+    <string name="alert_winner_description">You won the race!</string>
+    <string name="alert_winner_title">Winner!</string>
+    <string name="error_not_enough_starts">Not enough start positions for the expected number of players!</string>
+    <string name="error_no_start">Map has no start position!</string>
+    <string name="error_no_end">Map has no end position!</string>
+    <string name="error_map_io">I/O error while reading map description file</string>
 </resources>

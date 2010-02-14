@@ -22,4 +22,12 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="bug_report_subject">[ExitRoute] Rapport de bug</string>
+    <string name="alert_exitroute_description">Vous êtes sorti de la route ! vous revenez à la vitesse minimale tant que vous n'êtes pas revenu sur la route.</string>
+    <string name="alert_exitroute_title">Sortie de route !</string>
+    <string name="alert_winner_description">Vous avez gagné la course !</string>
+    <string name="alert_winner_title">Vainqueur !</string>
+    <string name="error_not_enough_starts">Pas assez de positions de départ pour le nombre de joueurs souhaité !</string>
+    <string name="error_no_start">La carte n'a aucune position de départ !</string>
+    <string name="error_no_end">La carte n'a aucune position d'arrivée !</string>
+    <string name="error_map_io">Erreur d'entrée/sortie lors de la lecture du fichier de description de la carte</string>
 </resources>

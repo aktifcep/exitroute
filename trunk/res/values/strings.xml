@@ -5,7 +5,7 @@
     <string name="title_about">About</string>
     <string name="about_author">About author</string>
     <string name="app_name">Off the road!</string>
-    <string name="app_description">My first game :)</string>
+    <string name="app_description">Warning! This is a test-app! Please install it and test it only if you are ready to make feedbacks :)\n\nAn old-school racing game originally played on paper.</string>
     <string name="new_remote_game">New online game</string>
     <string name="new_local_game">New local game</string>
     <string name="about">About</string>
@@ -14,7 +14,7 @@
     <string name="label_author">Author : </string>
     <string name="label_email">E-mail : </string>
     <string name="label_web_site">Web site : </string>
-    <string name="web_site_url">http://www.google.com</string>
+    <string name="web_site_url">http://code.google.com/p/exitroute</string>
     <string name="label_1_player">1 (training)</string>
     <string name="title_nb_players">Number of players</string>
     <string name="error_invalid_nb_players">Invalid number of players!</string>

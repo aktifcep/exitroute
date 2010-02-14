@@ -340,6 +340,17 @@ public class Map {
 		return getCell(x, y) != Constants.MAP_SYMBOL_WALL;
 	}
 
+	public Player getPlayerAt(int x, int y, Player[] allPlayers) {
+		Position position = new Position(x, y);
+		for (int i = 0; i < allPlayers.length; i++) {
+			if (allPlayers[i].position.equals(position)) {
+				return allPlayers[i];
+			}
+		}
+
+		return null;
+	}
+
 	public boolean isCellStart(int x, int y) {
 		return getCell(x, y) == Constants.MAP_SYMBOL_START;
 	}

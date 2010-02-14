@@ -1,14 +1,9 @@
 package com.naholyr.android.games.offroad.activity;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Vector;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -65,6 +60,7 @@ public class Game extends Activity {
 	}
 
 	private void handleError(final Throwable e) {
+		throw new RuntimeException(e);/*
 		AlertDialog.OnClickListener onNo = new AlertDialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -102,6 +98,7 @@ public class Game extends Activity {
 		builder.setNegativeButton(R.string.no, onNo);
 		AlertDialog alert = builder.create();
 		alert.show();
+		*/
 	}
 
 	private GameParameters initializeData() throws Exception {
@@ -128,6 +125,7 @@ public class Game extends Activity {
 			randomStarts[i] = startsList.get(k);
 			startsList.remove(k);
 		}
+		randomStarts = new Position[] { new Position(24,1), new Position(27,1) };
 		// Generate players
 		for (int i = 0; i < nbPlayers; i++) {
 			Player player = new Player("Player " + (i + 1));

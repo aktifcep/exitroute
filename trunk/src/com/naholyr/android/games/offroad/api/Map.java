@@ -17,8 +17,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 
 import com.naholyr.android.games.offroad.R;
+import com.naholyr.android.games.offroad.view.GameView;
 import com.naholyr.android.games.offroad.view.PlayerView;
-import com.naholyr.android.games.offroad.view.ScrollingImageView;
 import com.naholyr.android.games.offroad.view.TargetView;
 
 public class Map {
@@ -33,7 +33,7 @@ public class Map {
 	private Position[] _ends;
 
 	// View cache
-	private ScrollingImageView gameView;
+	private GameView gameView;
 	private BitmapDrawable _drawable;
 	private java.util.Map<Player, PlayerView> _playerViews = new HashMap<Player, PlayerView>();
 
@@ -201,7 +201,7 @@ public class Map {
 		return _name;
 	}
 
-	public void draw(ScrollingImageView gameView, boolean showGrid) {
+	public void draw(GameView gameView, boolean showGrid) {
 		this.gameView = gameView;
 
 		// FIXME Dynamic size
@@ -280,7 +280,7 @@ public class Map {
 		}
 	}
 
-	public ScrollingImageView getImageView() {
+	public GameView getView() {
 		return gameView;
 	}
 

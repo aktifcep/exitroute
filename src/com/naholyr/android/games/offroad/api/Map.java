@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -284,19 +285,6 @@ public class Map {
 		return gameView;
 	}
 
-	public TargetView drawTarget(Context context, Position position) {
-		return drawTarget(context, position.x, position.y);
-	}
-
-	public TargetView drawTarget(Context context, int x, int y) {
-		int rx = getRealX(x);
-		int ry = getRealY(y);
-		TargetView targetView = new TargetView(context, rx, ry, _cellSize);
-		gameView.addView(targetView);
-
-		return targetView;
-	}
-
 	public int getCoordsX(float rx) {
 		int x = Math.round(rx);
 
@@ -485,6 +473,10 @@ public class Map {
 
 	public Bitmap getBitmap() {
 		return _drawable.getBitmap();
+	}
+
+	public TargetView getNewTargetView(Activity context, int rx, int ry) {
+		return new TargetView(context, rx, ry, _cellSize);
 	}
 
 }

@@ -57,16 +57,22 @@ public class GameView extends ScrollingImageView {
 		Position[] targets = player.getTargets(params.players);
 		targetViews = new TargetView[targets.length];
 		for (int i = 0; i < targetViews.length; i++) {
-			targetViews[i] = params.map.drawTarget(launcher, targets[i]);
 			Player playerAt = params.map.getPlayerAt(targets[i].x, targets[i].y, params.players);
+			// Create and add target view
+			int rx = params.map.getRealX(targets[i].x);
+			int ry = params.map.getRealY(targets[i].y);
+			TargetView targetView = params.map.getNewTargetView(launcher, rx, ry);
+			targetView.setId(i);
+			addView(targetView);
 			// Here we play with visibility instead of not creating the view,
 			// because this leads to yet unexplained FC...
 			if (playerAt == null || playerAt == player) {
-				targetViews[i].setVisibility(View.VISIBLE);
-				targetViews[i].setListener(listener);
+				targetView.setVisibility(View.VISIBLE);
+				targetView.setListener(listener);
 			} else {
-				targetViews[i].setVisibility(View.GONE);
+				targetView.setVisibility(View.GONE);
 			}
+			targetViews[i] = targetView;
 		}
 	}
 

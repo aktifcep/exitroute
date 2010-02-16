@@ -139,7 +139,11 @@ public class Game implements TargetView.Listener {
 	@Override
 	public void onUnSelect(TargetView view) {
 		try {
+			// Redraw saved original bitmap rect
+			savedCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
+			// Reset view state
 			view.reset(true);
+			// Reset player icon alpha
 			params.map.getView(getCurrentPlayer()).setAlpha(255);
 		} catch (RuntimeException e) {
 			handleError(e);
@@ -169,7 +173,6 @@ public class Game implements TargetView.Listener {
 			float angle = Player.getOrientationAngle(speed);
 			view.rotate(angle);
 			params.map.getView(player).setAlpha(127);
-
 			// Redraw saved original bitmap rect
 			savedCanvas.drawBitmap(savedBitmap, savedX, savedY, new Paint());
 			// Draw a thick line between position and target
@@ -241,8 +244,8 @@ public class Game implements TargetView.Listener {
 			paint.setStrokeWidth(2.0f);
 			paint.setColor(player.color);
 			paint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawLine(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), params.map
-					.getRealXCenter(x), params.map.getRealYCenter(y), paint);
+			canvas.drawLine(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), params.map.getRealXCenter(x),
+					params.map.getRealYCenter(y), paint);
 			canvas.drawCircle(params.map.getRealXCenter(player.position.x), params.map.getRealYCenter(player.position.y), 3.0f, paint);
 			// Move player
 			player.moveTo(x, y);

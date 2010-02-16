@@ -40,6 +40,7 @@ public class TargetView extends TileView implements OnTouchListener, OnClickList
 		reset(false);
 
 		setFocusable(true);
+		setFocusableInTouchMode(true);
 		setClickable(true);
 
 		setOnTouchListener(this);
@@ -70,7 +71,7 @@ public class TargetView extends TileView implements OnTouchListener, OnClickList
 	private void click() {
 		switch (step) {
 			case STEP_SELECT:
-				select();
+				requestFocus();
 				break;
 			case STEP_CONFIRM:
 				confirmSelect();

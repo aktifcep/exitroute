@@ -2,6 +2,7 @@ package com.naholyr.android.games.offroad.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,6 +22,8 @@ public class GameView extends ScrollingImageView {
 
 		game = new Game(gameParameters);
 		game.draw(this);
+
+		setFocusable(true);
 	}
 
 	public Game getGame() {
@@ -63,6 +66,13 @@ public class GameView extends ScrollingImageView {
 			int ry = params.map.getRealY(targets[i].y);
 			TargetView targetView = params.map.getNewTargetView(launcher, rx, ry);
 			targetView.setId(i);
+			targetView.post(new Runnable() {
+				@Override
+				public void run() {
+					GameView.this.requestFocus();
+				}
+			});
+			Log.d(getClass().getName(), "targetView[" + i + "].id = " + String.valueOf(targetView.getId()));
 			addView(targetView);
 			// Here we play with visibility instead of not creating the view,
 			// because this leads to yet unexplained FC...
@@ -74,6 +84,12 @@ public class GameView extends ScrollingImageView {
 			}
 			targetViews[i] = targetView;
 		}
+
+		// Define the targets focus order
+		setNextFocusUpId(2);
+		setNextFocusRightId(4);
+		setNextFocusDownId(6);
+		setNextFocusLeftId(8);
 	}
 
 }

@@ -52,6 +52,13 @@ public class TileView extends ImageView {
 	}
 
 	public void moveTo(int x, int y) {
+		// Log.d(getClass().getName(), x + "-" + y);
+		// Animation anim = new TranslateAnimation(getLeft(), x, getTop(), y);
+		// anim.setDuration(2000);
+		// Log.d(getClass().getName(), "start animation");
+		// startAnimation(anim);
+		// Log.d(getClass().getName(), "end animation");
+
 		LayoutParams params = (LayoutParams) getLayoutParams();
 		params.x = x;
 		params.y = y;
@@ -59,6 +66,12 @@ public class TileView extends ImageView {
 	}
 
 	public void rotate(float angle) {
+		// Log.d(getClass().getName(), String.valueOf(angle));
+		// Animation anim = new RotateAnimation(0f, angle, ((float) getWidth())
+		// / 2, ((float) getHeight()) / 2);
+		// anim.setDuration(2000);
+		// startAnimation(anim);
+
 		Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
 		Matrix matrix = new Matrix();
 		matrix.postRotate(angle);
